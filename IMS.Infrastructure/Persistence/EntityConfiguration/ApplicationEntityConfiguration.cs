@@ -17,8 +17,8 @@ namespace IMS.Infrastructure.Persistence.EntityConfiguration
                 .HasForeignKey(d => d.ApplicationId);
 
             builder.HasOne(a => a.InternetPlan)
-                .WithOne()
-                .HasForeignKey<Domain.Entities.Application>(a => a.InternetPlan);
+                .WithMany()
+                .HasForeignKey(a => a.InternetPlanId);
         }
     }
 }
