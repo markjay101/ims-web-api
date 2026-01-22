@@ -1,4 +1,5 @@
 ﻿using IMS.Domain.Common.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace IMS.Domain.Entities
 {
@@ -6,6 +7,7 @@ namespace IMS.Domain.Entities
     {
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
+        [Precision(18, 2)] public decimal Amount { get; set; }
         public DateTime DueDate { get; set; }
         public InvoiceStatus Status { get; set; }
 
