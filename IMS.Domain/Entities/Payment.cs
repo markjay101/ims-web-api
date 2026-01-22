@@ -1,11 +1,11 @@
-﻿using IMS.Domain.Common.Enums;
+﻿using IMS.Domain.Common;
+using IMS.Domain.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace IMS.Domain.Entities
 {
-    public class Payment
+    public class Payment : BaseEntity
     {
-        public Guid Id { get; set; }
         public Guid InvoiceId { get; set; }
         public PaymentMethodEnum Method { get; set; }
         public string ReferenceNumber { get; set; } = null!;

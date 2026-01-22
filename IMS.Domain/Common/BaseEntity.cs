@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using IMS.Domain.Common.Interfaces;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IMS.Domain.Common
 {
-    public abstract class BaseEntity
+    public abstract class BaseEntity : IBaseEntity
     {
         [Key] public Guid Id { get; protected set; }
         private readonly List<BaseEvent> _domainEvents = [];

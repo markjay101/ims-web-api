@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using IMS.Domain.Common.Interfaces;
 
 namespace IMS.Domain.Common
 {
-    public abstract class BaseAuditableEntity : BaseEntity
+    public abstract class BaseAuditableEntity : BaseEntity, IBaseAuditableEntity
     {
         public string? CreatedBy { get; set; }
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;

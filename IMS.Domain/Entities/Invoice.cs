@@ -1,11 +1,11 @@
-﻿using IMS.Domain.Common.Enums;
+﻿using IMS.Domain.Common;
+using IMS.Domain.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace IMS.Domain.Entities
 {
-    public class Invoice
+    public class Invoice : BaseEntity
     {
-        public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
         [Precision(18, 2)] public decimal Amount { get; set; }
         public DateTime DueDate { get; set; }

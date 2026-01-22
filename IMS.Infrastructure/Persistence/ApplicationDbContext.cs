@@ -1,5 +1,5 @@
 ﻿using IMS.Application.Common.Interfaces;
-using IMS.Domain.Common;
+using IMS.Domain.Common.Interfaces;
 using IMS.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +20,7 @@ namespace IMS.Infrastructure.Persistence
         {
             var result = await base.SaveChangesAsync(ct);
 
-            var entitiesWithEvents = ChangeTracker.Entries<BaseEntity>()
+            var entitiesWithEvents = ChangeTracker.Entries<IBaseEntity>()
                 .Select(e => e.Entity)
                 .Where(e => e.DomainEvents.Any())
                 .ToList();
