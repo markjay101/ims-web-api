@@ -21,6 +21,7 @@ namespace IMS.Infrastructure
             });
 
             services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+            services.AddScoped<ApplicationDbContextInitializer>();
 
             services.AddIdentityCore<User>(options =>
             {
