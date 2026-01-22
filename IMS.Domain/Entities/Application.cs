@@ -14,8 +14,9 @@ namespace IMS.Domain.Entities
         public string Country { get; set; } = null!;
         public string PostalCode { get; set; } = null!;
         public ApplicationStatus Status { get; set; }
+        public Guid InternetPlanId { get; set; }
 
-        public Document Document { get; set; } = null!;
+        public ICollection<Document> Documents { get; set; } = null!;
         public InternetPlan InternetPlan { get; set; } = null!;
     }
 }
