@@ -24,6 +24,11 @@ namespace IMS.WebApi.Middlewares
 
                 await context.Response.WriteAsJsonAsync(response);
             }
+            catch (UnauthorizedAccessException uaex)
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                await context.Response.WriteAsJsonAsync(ApiResponse<object>.Failure([uaex.Message], "Unauthorized."));
+            }
             catch (Exception ex)
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
