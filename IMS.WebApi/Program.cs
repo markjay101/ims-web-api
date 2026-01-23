@@ -3,6 +3,7 @@ using IMS.Infrastructure;
 using IMS.Infrastructure.Persistence;
 using IMS.WebApi;
 using IMS.WebApi.Middlewares;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,11 +27,11 @@ if (app.Environment.IsDevelopment())
         await initialiser.SeedAsync();
     }
 
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
+    app.MapScalarApiReference(options =>
     {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "IMS API V1");
-
+        options.WithTitle("IMS API Reference")
+               .WithTheme(ScalarTheme.Moon)
+               .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
     });
 }
 
