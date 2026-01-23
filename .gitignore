@@ -365,4 +365,4 @@ FodyWeavers.xsd
 # Secrets and local configuration
 appsettings.json
 appsettings.*.json
-IMS.WebApi.http
+IMS.WebApi/IMS.WebApi.http
