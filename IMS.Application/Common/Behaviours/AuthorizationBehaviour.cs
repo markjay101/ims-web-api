@@ -15,7 +15,7 @@ namespace IMS.Application.Common.Behaviours
             {
                 if (currentUserService.UserId == null)
                 {
-                    throw new UnauthorizedAccessException("Unauthorized. No valid token found.");
+                    throw new UnauthorizedAccessException("No valid token found.");
                 }
 
                 var authorizeAttributesWithRoles = authorizeAttributes.Where(a => !string.IsNullOrWhiteSpace(a.Role));
@@ -32,7 +32,7 @@ namespace IMS.Application.Common.Behaviours
 
                     if(!authorized)
                     {
-                        throw new UnauthorizedAccessException("Unauthorized. You do not have the necessary role for this request");
+                        throw new UnauthorizedAccessException("You do not have the necessary role for this request");
                     }
                 }
             }

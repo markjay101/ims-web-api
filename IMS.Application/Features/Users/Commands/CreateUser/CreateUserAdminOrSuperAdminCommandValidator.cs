@@ -14,15 +14,15 @@ namespace IMS.Application.Features.Users.Commands.CreateUser
             _context = context;
 
             RuleFor(v => v.UserName)
-                .NotEmpty().WithMessage("UserName is required.")
+                .NotEmpty().WithMessage("The UserName field is required.")
                 .EmailAddress().WithMessage("UserName should be a valid Email Address.")
                 .MustAsync(BeUniqueUserName).WithMessage("This Email Address is already registered.");
 
             RuleFor(v => v.FirstName)
-               .NotEmpty().WithMessage("FirstName is required.");
+               .NotEmpty().WithMessage("The FirstName field is required.");
 
             RuleFor(v => v.LastName)
-               .NotEmpty().WithMessage("FirstName is required.");
+               .NotEmpty().WithMessage("The LastName field is required.");
 
             RuleFor(v => v.Role)
                 .Must(BeSuperAdminOrAdminRole)
