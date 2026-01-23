@@ -7,7 +7,7 @@ namespace IMS.WebApi.Controllers
 {
     public class UsersController : ApiControllerBase
     {
-        [HttpPost]
+        [HttpPost("signin")]
         public async Task<IActionResult> SignIn(SignInCommand command)
         {
             var token = await Mediator.Send(command);

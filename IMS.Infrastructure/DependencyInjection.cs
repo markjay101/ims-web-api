@@ -37,9 +37,6 @@ namespace IMS.Infrastructure
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
-            var jwtSettings = config.GetSection("JwtSettings");
-            var secret = jwtSettings.GetValue<string>("Secret");
-
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -53,14 +50,15 @@ namespace IMS.Infrastructure
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtSettings.GetValue<string>("Issuer"),
-                    ValidAudience = jwtSettings.GetValue<string>("Audience"),
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret!))
+                    ValidIssuer = config["JwtSettings:Issuer"],
+                    ValidAudience = config["JwtSettings:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSettings:Secret"]!))
                 };
             });
 
-            services.AddScoped<IIdentityService, IdentityService>();
             services.AddHttpContextAccessor();
+            services.AddScoped<IIdentityService, IdentityService>();
+            services.AddAuthorization();
 
             return services;
         }

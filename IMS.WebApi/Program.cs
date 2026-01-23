@@ -1,6 +1,7 @@
 using IMS.Application;
 using IMS.Infrastructure;
 using IMS.Infrastructure.Persistence;
+using IMS.WebApi;
 using IMS.WebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
+builder.Services.AddWebApiServices();
 
 var app = builder.Build();
 
@@ -31,6 +33,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
