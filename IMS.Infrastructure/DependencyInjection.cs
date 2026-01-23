@@ -18,6 +18,7 @@ namespace IMS.Infrastructure
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config)
         {
             services.AddDataProtection();
+            services.AddScoped<AuditableEntityInterceptor>();
             services.AddDbContext<ApplicationDbContext>((sp, options) =>
             {
                 var connectionString = config.GetConnectionString("DefaultConnection");

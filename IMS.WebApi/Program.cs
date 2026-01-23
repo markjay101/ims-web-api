@@ -6,11 +6,6 @@ using IMS.WebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 builder.Services.AddWebApiServices();
@@ -30,6 +25,13 @@ if (app.Environment.IsDevelopment())
         await initialiser.InitializeAsync();
         await initialiser.SeedAsync();
     }
+
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "IMS API V1");
+
+    });
 }
 
 app.UseHttpsRedirection();
