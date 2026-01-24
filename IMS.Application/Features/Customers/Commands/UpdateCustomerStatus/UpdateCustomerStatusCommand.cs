@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using IMS.Application.Common.Interfaces;
+﻿using IMS.Application.Common.Interfaces;
 using IMS.Application.Common.Security;
 using IMS.Domain.Common.Enums;
 using MediatR;
@@ -9,7 +8,7 @@ namespace IMS.Application.Features.Customers.Commands.UpdateCustomerStatus
     [Authorize(Role = UserRoles.SuperAdmin)]
     [Authorize(Role = UserRoles.Admin)]
     public record UpdateCustomerStatusCommand(Guid Id, CustomerStatus Status) : IRequest<bool>;
-    public class UpdateCustomerStatusCommandHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<UpdateCustomerStatusCommand, bool>
+    public class UpdateCustomerStatusCommandHandler(IApplicationDbContext context) : IRequestHandler<UpdateCustomerStatusCommand, bool>
     {
         public async Task<bool> Handle(UpdateCustomerStatusCommand request, CancellationToken cancellationToken)
         {
