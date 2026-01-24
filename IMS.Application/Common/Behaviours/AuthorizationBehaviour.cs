@@ -27,7 +27,10 @@ namespace IMS.Application.Common.Behaviours
                     foreach (var authorizeAttribute in authorizeAttributesWithRoles)
                     {
                         if(authorizeAttribute.Role == currentUserService.Role)
-                            authorized = true;
+                        {
+                            authorized = true; 
+                            break;
+                        }
                     }
 
                     if(!authorized)
