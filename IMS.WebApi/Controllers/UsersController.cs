@@ -9,7 +9,11 @@ namespace IMS.WebApi.Controllers
 {
     public class UsersController : ApiControllerBase
     {
-        [HttpPost("signin")]
+        [HttpPost("sign-in")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SignIn(SignInCommand command)
         {
             var token = await Mediator.Send(command);
@@ -23,6 +27,11 @@ namespace IMS.WebApi.Controllers
         }
 
         [HttpPost("create-admin")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateUserAdminOrSuperAdmin(CreateUserAdminOrSuperAdminCommand command)
         {
             var result = await Mediator.Send(command);
@@ -34,6 +43,12 @@ namespace IMS.WebApi.Controllers
         }
 
         [HttpGet("admins")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedList<UserDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedList<UserDto>>), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAdmins([FromQuery]GetAdminsQuery query)
         {
             var result = await Mediator.Send(query);

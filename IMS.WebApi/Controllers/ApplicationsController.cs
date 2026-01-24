@@ -1,4 +1,5 @@
 ﻿using IMS.Application.Common.Models;
+using IMS.Application.Common.Security;
 using IMS.Application.Features.Applications.Commands.CreateApplication;
 using IMS.Application.Features.Applications.Commands.UpdateApplicationStatus;
 using IMS.Application.Features.Applications.Queries;
@@ -10,17 +11,26 @@ namespace IMS.WebApi.Controllers
     public class ApplicationsController : ApiControllerBase
     {
         [HttpPost]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<Guid>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateApplication([FromBody] CreateApplicationCommand command)
         {
             var result = await Mediator.Send(command);
 
-            if (result)
-                return StatusCode(201, ApiResponse<object>.Success(message: "Application successfully submitted."));
+            if (result != Guid.Empty)
+                return StatusCode(StatusCodes.Status201Created, ApiResponse<Guid>.Success(result, "Application successfully submitted."));
 
             return BadRequest(ApiResponse<object>.Failure([], "Failed to submit application."));
         }
 
         [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedList<ApplicationDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedList<ApplicationDto>>), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetApplications([FromQuery] GetApplicationsQuery query)
         {
             var result = await Mediator.Send(query);
@@ -28,10 +38,15 @@ namespace IMS.WebApi.Controllers
             if (result.Items.Count > 0)
                 return Ok(ApiResponse<PaginatedList<ApplicationDto>>.Success(result));
 
-            return StatusCode(204, ApiResponse<PaginatedList<ApplicationDto>>.Success(result, "No applications found."));
+            return StatusCode(StatusCodes.Status204NoContent, ApiResponse<PaginatedList<ApplicationDto>>.Success(result, "No applications found."));
         }
 
         [HttpPost("update-status")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateApplicationStatus([FromBody] UpdateApplicationStatusCommand command)
         {
             var result = await Mediator.Send(command);

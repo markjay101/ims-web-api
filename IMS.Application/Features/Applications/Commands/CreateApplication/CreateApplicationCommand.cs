@@ -14,10 +14,10 @@ namespace IMS.Application.Features.Applications.Commands.CreateApplication
         string Country,
         string PostalCode,
         string InternetPlanId
-        ) : IRequest<bool>;
-    public class CreateApplicationCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateApplicationCommand, bool>
+        ) : IRequest<Guid>;
+    public class CreateApplicationCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateApplicationCommand, Guid>
     {
-        public async Task<bool> Handle(CreateApplicationCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(CreateApplicationCommand request, CancellationToken cancellationToken)
         {
             var application = new Domain.Entities.Application
             {
@@ -37,7 +37,7 @@ namespace IMS.Application.Features.Applications.Commands.CreateApplication
 
             var result = await context.SaveChangesAsync(cancellationToken);
 
-            return result > 0;
+            return result > 0 ? application.Id : Guid.Empty;
         }
     }
 }

@@ -9,6 +9,11 @@ namespace IMS.WebApi.Controllers
     public class CustomersController : ApiControllerBase
     {
         [HttpPost("update-status")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateCustomerStatus([FromBody]UpdateCustomerStatusCommand command)
         {
             var result =  await Mediator.Send(command);
@@ -20,6 +25,12 @@ namespace IMS.WebApi.Controllers
         }
 
         [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedList<CustomerDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedList<CustomerDto>>), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetCustomers([FromQuery] GetCustomersQuery query)
         {
             var result = await Mediator.Send(query);
