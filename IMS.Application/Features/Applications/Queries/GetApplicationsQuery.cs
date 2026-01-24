@@ -10,7 +10,7 @@ namespace IMS.Application.Features.Applications.Queries
 {
     [Authorize(Role = UserRoles.SuperAdmin)]
     [Authorize(Role = UserRoles.Admin)]
-    public record GetApplicationsQuery(int PageNumber, int PageSize) : IRequest<PaginatedList<ApplicationDto>>;
+    public record GetApplicationsQuery(int PageNumber = 1, int PageSize = 25) : IRequest<PaginatedList<ApplicationDto>>;
     public class GetApplicationsQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetApplicationsQuery, PaginatedList<ApplicationDto>>
     {
         public async Task<PaginatedList<ApplicationDto>> Handle(GetApplicationsQuery request, CancellationToken cancellationToken)

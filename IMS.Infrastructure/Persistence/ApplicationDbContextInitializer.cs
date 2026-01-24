@@ -52,6 +52,32 @@ namespace IMS.Infrastructure.Persistence
                     Console.WriteLine("Failed to seed SuperAdmin: {Errors}", errors);
                 }
             }
+
+            if (!await context.InternetPlans.AnyAsync())
+            {
+                var plans = new List<InternetPlan>
+                {
+                    new InternetPlan
+                    {
+                        Name = "Fiber Starter",
+                        Description = "Perfect for small households and basic browsing.",
+                        SpeedMbps = 150,
+                        Price = 1299.00m,
+                        Currency = "PHP"
+                    },
+                    new InternetPlan
+                    {
+                        Name = "Fiber Pro Max",
+                        Description = "High-speed connection for gaming and 4K streaming.",
+                        SpeedMbps = 400,
+                        Price = 2499.00m,
+                        Currency = "PHP"
+                    }
+                };
+
+                await context.InternetPlans.AddRangeAsync(plans);
+                await context.SaveChangesAsync();
+            }
         }
     }
 }
