@@ -1,9 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace IMS.Application.Features.InternetPlans.Queries
+﻿namespace IMS.Application.Features.InternetPlans.Queries
 {
     public class InternetPlanDto
     {
+        public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public int SpeedMbps { get; set; }

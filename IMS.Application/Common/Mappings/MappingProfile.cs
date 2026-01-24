@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using IMS.Application.Features.Applications.Queries;
 using IMS.Application.Features.Customers.Queries;
+using IMS.Application.Features.InternetPlans.Queries;
 using IMS.Application.Features.Users.Queries;
 using IMS.Domain.Entities;
 
@@ -20,6 +21,8 @@ namespace IMS.Application.Common.Mappings
                 .ForMember(dest => dest.ApplicationId, opt => opt.MapFrom(src => src.Id));
 
             CreateMap<Customer, CustomerDto>();
+
+            CreateMap<InternetPlan, InternetPlanDto>();
         }
     }
 }
