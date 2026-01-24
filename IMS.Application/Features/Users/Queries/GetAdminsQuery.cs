@@ -9,7 +9,7 @@ using MediatR;
 
 namespace IMS.Application.Features.Users.Queries
 {
-    [Authorize(Role = "SuperAdmin")]
+    [Authorize(Role = UserRoles.SuperAdmin)]
     public record GetAdminsQuery(int PageNumber = 1, int PageSize = 25) : IRequest<PaginatedList<UserDto>>;
     public class GetAdminsQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetAdminsQuery, PaginatedList<UserDto>>
     {

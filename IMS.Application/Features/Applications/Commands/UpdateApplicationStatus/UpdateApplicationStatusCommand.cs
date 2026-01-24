@@ -7,8 +7,8 @@ using MediatR;
 
 namespace IMS.Application.Features.Applications.Commands.UpdateApplicationStatus
 {
-    [Authorize(Role = "SuperAdmin")]
-    [Authorize(Role = "Admin")]
+    [Authorize(Role = UserRoles.SuperAdmin)]
+    [Authorize(Role = UserRoles.Admin)]
     public record UpdateApplicationStatusCommand(Guid ApplicationId, ApplicationStatus Status) : IRequest<bool>;
     public class UpdateApplicationStatusCommandHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<UpdateApplicationStatusCommand, bool>
     {

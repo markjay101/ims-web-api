@@ -8,8 +8,8 @@ using MediatR;
 
 namespace IMS.Application.Features.Applications.Queries
 {
-    [Authorize(Role = "SuperAdmin")]
-    [Authorize(Role = "Admin")]
+    [Authorize(Role = UserRoles.SuperAdmin)]
+    [Authorize(Role = UserRoles.Admin)]
     public record GetApplicationsQuery(int PageNumber, int PageSize) : IRequest<PaginatedList<ApplicationDto>>;
     public class GetApplicationsQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetApplicationsQuery, PaginatedList<ApplicationDto>>
     {

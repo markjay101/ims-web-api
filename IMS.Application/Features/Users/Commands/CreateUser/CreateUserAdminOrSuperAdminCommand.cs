@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace IMS.Application.Features.Users.Commands.CreateUser
 {
-    [Authorize(Role = "SuperAdmin")]
+    [Authorize(Role = UserRoles.SuperAdmin)]
     public record CreateUserAdminOrSuperAdminCommand(string UserName, string FirstName, string LastName, Role Role) : IRequest<bool>;
 
     public class CreateUserAdminOrSuperAdminCommandHandler(UserManager<User> userManager) : IRequestHandler<CreateUserAdminOrSuperAdminCommand, bool>
