@@ -28,7 +28,7 @@ namespace IMS.WebApi.Controllers
             var result = await Mediator.Send(command);
 
             if(result)
-                return Ok(ApiResponse<object>.Success(message: $"User {command.Role} successfully created."));
+                return StatusCode(201, ApiResponse<object>.Success(message: $"User {command.Role} successfully created."));
 
             return BadRequest(ApiResponse<object>.Failure([], "Failed to create user."));
         }
@@ -41,7 +41,7 @@ namespace IMS.WebApi.Controllers
             if (result.Items.Count != 0)
                 return Ok(ApiResponse<PaginatedList<UserDto>>.Success(result));
 
-            return StatusCode(204, ApiResponse<List<object>>.Success([]));
+            return StatusCode(204, ApiResponse<PaginatedList<UserDto>>.Success(result));
         }
     }
 }
