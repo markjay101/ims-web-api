@@ -1,10 +1,12 @@
 ﻿using IMS.Application.Common.Interfaces;
+using IMS.Application.Common.Security;
 using IMS.Domain.Common.Enums;
 using IMS.Domain.Entities;
 using MediatR;
 
 namespace IMS.Application.Features.Payments.Commands.CreatePayment
 {
+    [Authorize(Role = UserRoles.Customer)]
     public record CreatePaymentCommand(string InvoiceId, PaymentMethodEnum PaymentMethod, string ReferenceNumber, decimal Amount) : IRequest<Guid>;
     public class CreatePaymentCommandHandler(IApplicationDbContext context) : IRequestHandler<CreatePaymentCommand, Guid>
     {
