@@ -27,7 +27,7 @@ namespace IMS.Application.Features.Users.Commands.CreateUser
             var namePart = new string([.. request.LastName.Take(2)]);
             var defaultPassword = $"{char.ToUpper(namePart[0])}{namePart[1..]}@{shortGuid}!";
 
-            var result = await userManager.CreateAsync(newAdmin, defaultPassword);
+            var result = await userManager.CreateAsync(newAdmin, defaultPassword.ToUpper());
 
             return result.Succeeded;
         }

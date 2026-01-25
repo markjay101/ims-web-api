@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using IMS.Application.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace IMS.Application.Features.Applications.Commands.CreateApplication
 {
@@ -52,10 +51,7 @@ namespace IMS.Application.Features.Applications.Commands.CreateApplication
 
         private async Task<bool> InternetPlanShouldExist(string guid, CancellationToken token)
         {
-            if (!Guid.TryParse(guid, out var parsedGuid))
-                return false;
-
-            return await _context.InternetPlans.AnyAsync(ip => ip.Id == parsedGuid, token);
+            return await _context.InternetPlans.AnyAsync(ip => ip.Id == Guid.Parse(guid), token);
         }
     }
 }
