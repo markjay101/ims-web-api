@@ -1,10 +1,6 @@
 ﻿using IMS.Application.Common.Interfaces;
 using IMS.Domain.Common.Enums;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace IMS.Application.Features.Invoices.Commands.UpdateInvoiceStatus
 {
     public record UpdateInvoiceStatusCommand(Guid InvoiceId, InvoiceStatus Status) : IRequest<bool>;
@@ -20,7 +16,5 @@ namespace IMS.Application.Features.Invoices.Commands.UpdateInvoiceStatus
 
             return result > 0;
         }
-    }
-    {
     }
 }
