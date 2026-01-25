@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IMS.Domain.Entities
 {
-    public class Invoice : BaseEntity
+    public class Invoice : BaseAuditableEntity
     {
         public Guid CustomerId { get; set; }
         [Precision(18, 2)] public decimal Amount { get; set; }

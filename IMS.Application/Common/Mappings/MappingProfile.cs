@@ -2,8 +2,10 @@
 using IMS.Application.Features.Applications.Queries;
 using IMS.Application.Features.Customers.Queries;
 using IMS.Application.Features.InternetPlans.Queries;
+using IMS.Application.Features.Invoices.Queries;
 using IMS.Application.Features.Modems.Queries;
 using IMS.Application.Features.PaymentMethods.Queries;
+using IMS.Application.Features.Payments.Queries;
 using IMS.Application.Features.Users.Queries;
 using IMS.Domain.Entities;
 
@@ -29,6 +31,10 @@ namespace IMS.Application.Common.Mappings
             CreateMap<Modem, ModemDto>();
 
             CreateMap<PaymentMethod, PaymentMethodDto>();
+
+            CreateMap<Invoice, InvoiceDto>();
+
+            CreateMap<Payment, PaymentDto>();
         }
     }
 }
