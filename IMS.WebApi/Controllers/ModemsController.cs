@@ -8,6 +8,22 @@ namespace IMS.WebApi.Controllers
 {
     public class ModemsController : ApiControllerBase
     {
+        [HttpPost("create")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<Guid>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateModem([FromBody] CreateModemCommand command)
+        {
+            var result = await Mediator.Send(command);
+
+            if (result != Guid.Empty)
+                return StatusCode(201, ApiResponse<Guid>.Success(result, "Modem successfully created."));
+
+            return BadRequest(ApiResponse<object>.Failure(["Empty Guid"], "Failed to create modem."));
+        }
+
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ApiResponse<PaginatedList<ModemDto>>), StatusCodes.Status200OK)]
@@ -23,22 +39,6 @@ namespace IMS.WebApi.Controllers
                 return Ok(ApiResponse<PaginatedList<ModemDto>>.Success(result));
 
             return StatusCode(StatusCodes.Status204NoContent, ApiResponse<PaginatedList<ModemDto>>.Success(result, "No modems found."));
-        }
-
-        [HttpPost]
-        [Produces("application/json")]
-        [ProducesResponseType(typeof(ApiResponse<Guid>), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateModem([FromBody] CreateModemCommand command)
-        {
-            var result = await Mediator.Send(command);
-
-            if (result != Guid.Empty)
-                return StatusCode(201, ApiResponse<Guid>.Success(result, "Modem successfully created."));
-
-            return BadRequest(ApiResponse<object>.Failure(["Empty Guid"], "Failed to create modem."));
         }
     }
 }

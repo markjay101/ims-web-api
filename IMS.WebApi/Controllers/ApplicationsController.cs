@@ -10,7 +10,7 @@ namespace IMS.WebApi.Controllers
 {
     public class ApplicationsController : ApiControllerBase
     {
-        [HttpPost]
+        [HttpPost("create")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ApiResponse<Guid>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
@@ -23,22 +23,6 @@ namespace IMS.WebApi.Controllers
                 return StatusCode(StatusCodes.Status201Created, ApiResponse<Guid>.Success(result, "Application successfully submitted."));
 
             return BadRequest(ApiResponse<object>.Failure([], "Failed to submit application."));
-        }
-
-        [HttpGet]
-        [Produces("application/json")]
-        [ProducesResponseType(typeof(ApiResponse<PaginatedList<ApplicationDto>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<PaginatedList<ApplicationDto>>), StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetApplications([FromQuery] GetApplicationsQuery query)
-        {
-            var result = await Mediator.Send(query);
-
-            if (result.Items.Count > 0)
-                return Ok(ApiResponse<PaginatedList<ApplicationDto>>.Success(result));
-
-            return StatusCode(StatusCodes.Status204NoContent, ApiResponse<PaginatedList<ApplicationDto>>.Success(result, "No applications found."));
         }
 
         [HttpPost("update-status")]
@@ -55,6 +39,22 @@ namespace IMS.WebApi.Controllers
                 return Ok(ApiResponse<object>.Success(message: $"Application status successfully update to {command.Status}"));
 
             return BadRequest(ApiResponse<object>.Failure([], "Failed to update application status"));
+        }
+
+        [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedList<ApplicationDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedList<ApplicationDto>>), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetApplications([FromQuery] GetApplicationsQuery query)
+        {
+            var result = await Mediator.Send(query);
+
+            if (result.Items.Count > 0)
+                return Ok(ApiResponse<PaginatedList<ApplicationDto>>.Success(result));
+
+            return StatusCode(StatusCodes.Status204NoContent, ApiResponse<PaginatedList<ApplicationDto>>.Success(result, "No applications found."));
         }
     }
 }

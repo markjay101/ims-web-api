@@ -12,24 +12,7 @@ namespace IMS.WebApi.Controllers
     [ApiController]
     public class InternetPlansController : ApiControllerBase
     {
-        [HttpGet]
-        [Produces("application/json")]
-        [ProducesResponseType(typeof(ApiResponse<PaginatedList<InternetPlanDto>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<PaginatedList<InternetPlanDto>>), StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetInternetPlans([FromQuery] GetInternetPlansQuery query)
-        {
-            var result =  await Mediator.Send(query);
-
-            if (result.Items.Count > 0)
-                return Ok(ApiResponse<PaginatedList<InternetPlanDto>>.Success(result));
-
-            return StatusCode(StatusCodes.Status204NoContent, ApiResponse<PaginatedList<InternetPlanDto>>.Success(result, "No internet plans found."));
-        }
-
-        [HttpPost]
+        [HttpPost("create")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ApiResponse<Guid>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
@@ -43,6 +26,23 @@ namespace IMS.WebApi.Controllers
                 return StatusCode(201, ApiResponse<Guid>.Success(result, "Internet Plan successfully created."));
 
             return BadRequest(ApiResponse<object>.Failure(["Empty Guid"], "Failed to create internet plan."));
+        }
+
+        [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedList<InternetPlanDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedList<InternetPlanDto>>), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetInternetPlans([FromQuery] GetInternetPlansQuery query)
+        {
+            var result = await Mediator.Send(query);
+
+            if (result.Items.Count > 0)
+                return Ok(ApiResponse<PaginatedList<InternetPlanDto>>.Success(result));
+
+            return StatusCode(StatusCodes.Status204NoContent, ApiResponse<PaginatedList<InternetPlanDto>>.Success(result, "No internet plans found."));
         }
     }
 }
