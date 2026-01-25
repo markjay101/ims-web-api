@@ -1,8 +1,10 @@
 ﻿using IMS.Application.Common.Interfaces;
+using IMS.Application.Common.Security;
 using MediatR;
 
 namespace IMS.Application.Features.PaymentMethods.Commands.UpdatePaymentMethod
 {
+    [Authorize(Role = UserRoles.SuperAdmin)]
     public record UpdatePaymentMethodCommand(Guid PaymentMethodId, string AccountName, string AccountNumber) : IRequest<bool>;
     public class UpdatePaymentMethodCommandHandler(IApplicationDbContext context) : IRequestHandler<UpdatePaymentMethodCommand, bool>
     {
