@@ -1,8 +1,11 @@
 ﻿using IMS.Application.Common.Interfaces;
+using IMS.Application.Common.Security;
 using IMS.Domain.Common.Enums;
 using MediatR;
 namespace IMS.Application.Features.Invoices.Commands.UpdateInvoiceStatus
 {
+    [Authorize(Role = UserRoles.SuperAdmin)]
+    [Authorize(Role = UserRoles.Admin)]
     public record UpdateInvoiceStatusCommand(Guid InvoiceId, InvoiceStatus Status) : IRequest<bool>;
     public class UpdateInvoiceStatusCommandHandler(IApplicationDbContext context) : IRequestHandler<UpdateInvoiceStatusCommand, bool>
     {

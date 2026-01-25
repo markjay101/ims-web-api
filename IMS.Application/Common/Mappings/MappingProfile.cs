@@ -32,7 +32,8 @@ namespace IMS.Application.Common.Mappings
 
             CreateMap<PaymentMethod, PaymentMethodDto>();
 
-            CreateMap<Invoice, InvoiceDto>();
+            CreateMap<Invoice, InvoiceDto>()
+                .ForMember(dest => dest.IssueDate, opt => opt.MapFrom(src => src.CreatedAt));
 
             CreateMap<Payment, PaymentDto>();
         }

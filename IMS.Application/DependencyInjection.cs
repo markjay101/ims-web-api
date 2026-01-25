@@ -16,7 +16,7 @@ namespace IMS.Application
                 cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             });
 
-            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), includeInternalTypes: true);
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
             return services;
