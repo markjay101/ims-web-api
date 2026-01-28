@@ -1,8 +1,10 @@
 ﻿
+using IMS.Application.Features.Users.Commands.SignIn;
+
 namespace IMS.Application.Common.Interfaces
 {
     public interface IIdentityService
     {
-        Task<string?> AuthenticateAsync(string username, string password);
+        Task<UserTokenDto?> AuthenticateAsync(string username, string password);
     }
 }

@@ -1,4 +1,7 @@
-﻿using IMS.Application.Common.Interfaces;
+﻿using AutoMapper;
+using IMS.Application.Common.Interfaces;
+using IMS.Application.Features.Users.Commands.SignIn;
+using IMS.Application.Features.Users.Queries;
 using IMS.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -9,14 +12,21 @@ using System.Text;
 
 namespace IMS.Infrastructure.Identity
 {
-    public class IdentityService(UserManager<User> userManager, IConfiguration configuration) : IIdentityService
+    public class IdentityService(UserManager<User> userManager, IConfiguration configuration, IMapper mapper) : IIdentityService
     {
-        public async Task<string?> AuthenticateAsync(string username, string password)
+        public async Task<UserTokenDto?> AuthenticateAsync(string username, string password)
         {
             var user = await userManager.FindByNameAsync(username);
 
             if (user != null && await userManager.CheckPasswordAsync(user, password))
-                return GenerateJwtToken(user);
+            {
+                var token = GenerateJwtToken(user);
+                return new UserTokenDto
+                {
+                    Token = token!,
+                    User = mapper.Map<UserDto>(user)
+                };
+            }
 
             return null;
         }

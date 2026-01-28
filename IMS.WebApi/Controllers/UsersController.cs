@@ -11,16 +11,16 @@ namespace IMS.WebApi.Controllers
     {
         [HttpPost("sign-in")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<UserTokenDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SignIn(SignInCommand command)
         {
-            var token = await Mediator.Send(command);
+            var userToken = await Mediator.Send(command);
 
-            if (!string.IsNullOrEmpty(token))
+            if (!string.IsNullOrEmpty(userToken?.Token))
             {
-                return Ok(ApiResponse<object>.Success(new { token }, "Login successful."));
+                return Ok(ApiResponse<UserTokenDto>.Success(userToken, "Login successful."));
             }
 
             return Unauthorized(ApiResponse<object>.Failure(["The email or password provided is incorrect."], "Authentication failed."));
