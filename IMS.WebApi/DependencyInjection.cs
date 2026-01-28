@@ -10,8 +10,23 @@ namespace IMS.WebApi
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddWebApiServices(this IServiceCollection services)
+        public static IServiceCollection AddWebApiServices(this IServiceCollection services, IConfiguration configuration)
         {
+            var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AppClients", policy =>
+                {
+                    if (allowedOrigins != null && allowedOrigins.Length > 0)
+                    {
+                        policy.WithOrigins(allowedOrigins) 
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                    }
+                });
+            });
+
             services.AddControllers()
                 .ConfigureApiBehaviorOptions(options =>
                 {

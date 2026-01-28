@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
-builder.Services.AddWebApiServices();
+builder.Services.AddWebApiServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -36,6 +36,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AppClients");
 
 app.UseAuthentication();
 
