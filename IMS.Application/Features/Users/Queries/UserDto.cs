@@ -1,6 +1,4 @@
-﻿using IMS.Domain.Common.Enums;
-
-namespace IMS.Application.Features.Users.Queries
+﻿namespace IMS.Application.Features.Users.Queries
 {
     public class UserDto
     {

@@ -58,5 +58,18 @@ namespace IMS.WebApi.Controllers
 
             return StatusCode(204, ApiResponse<PaginatedList<UserDto>>.Success(result));
         }
+
+        [HttpGet("admin/stats")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<AdminStatDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAdminStats([FromQuery] GetAdminStatQuery query)
+        {
+            var result = await Mediator.Send(query);
+
+            return Ok(ApiResponse<AdminStatDto>.Success(result));
+        }
     }
 }
