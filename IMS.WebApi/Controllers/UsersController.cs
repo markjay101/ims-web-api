@@ -1,6 +1,7 @@
 ﻿using IMS.Application.Common.Models;
 using IMS.Application.Features.Users.Commands.CreateUserAdminOrSuperAdmin;
 using IMS.Application.Features.Users.Commands.SignIn;
+using IMS.Application.Features.Users.Commands.UpdateUserAdminOrSuperAdmin;
 using IMS.Application.Features.Users.Queries;
 using IMS.WebApi.Common;
 using Microsoft.AspNetCore.Mvc;
@@ -40,6 +41,22 @@ namespace IMS.WebApi.Controllers
                 return StatusCode(201, ApiResponse<object>.Success(message: $"User {command.Role} successfully created."));
 
             return BadRequest(ApiResponse<object>.Failure([], "Failed to create user."));
+        }
+
+        [HttpPost("update-admin")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateUserAdminOrSuperAdmin(UpdateUserAdminOrSuperAdminCommand command)
+        {
+            var result = await Mediator.Send(command);
+
+            if (result)
+                return Ok(ApiResponse<object>.Success(message: $"User admin successfully updated."));
+
+            return BadRequest(ApiResponse<object>.Failure([], "Failed to update user admin."));
         }
 
         [HttpGet("admins")]
