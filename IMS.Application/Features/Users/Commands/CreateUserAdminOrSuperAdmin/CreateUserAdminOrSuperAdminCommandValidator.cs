@@ -3,7 +3,7 @@ using IMS.Application.Common.Interfaces;
 using IMS.Domain.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace IMS.Application.Features.Users.Commands.CreateUser
+namespace IMS.Application.Features.Users.Commands.CreateUserAdminOrSuperAdmin
 {
     public class CreateUserAdminOrSuperAdminCommandValidator : AbstractValidator<CreateUserAdminOrSuperAdminCommand>
     {

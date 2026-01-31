@@ -1,5 +1,5 @@
 ﻿using IMS.Application.Common.Models;
-using IMS.Application.Features.Users.Commands.CreateUser;
+using IMS.Application.Features.Users.Commands.CreateUserAdminOrSuperAdmin;
 using IMS.Application.Features.Users.Commands.SignIn;
 using IMS.Application.Features.Users.Queries;
 using IMS.WebApi.Common;

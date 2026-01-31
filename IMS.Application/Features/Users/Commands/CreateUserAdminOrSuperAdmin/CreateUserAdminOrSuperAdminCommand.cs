@@ -4,7 +4,7 @@ using IMS.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace IMS.Application.Features.Users.Commands.CreateUser
+namespace IMS.Application.Features.Users.Commands.CreateUserAdminOrSuperAdmin
 {
     [Authorize(Role = UserRoles.SuperAdmin)]
     public record CreateUserAdminOrSuperAdminCommand(string UserName, string FirstName, string LastName, Role Role) : IRequest<bool>;
