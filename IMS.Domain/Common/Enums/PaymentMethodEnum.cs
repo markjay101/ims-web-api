@@ -6,5 +6,6 @@
         Maya,
         BPI,
         UnionBank,
+        BDO
     }
 }
