@@ -27,7 +27,7 @@ namespace IMS.Application.Features.Users.Commands.CreateUserAdminOrSuperAdmin
             var namePart = new string([.. request.LastName.Take(2)]);
             var defaultPassword = $"{char.ToUpper(namePart[0])}{namePart[1..]}@{shortGuid}!";
 
-            var result = await userManager.CreateAsync(newAdmin, defaultPassword.ToUpper());
+            var result = await userManager.CreateAsync(newAdmin, defaultPassword);
 
             return result.Succeeded;
         }
