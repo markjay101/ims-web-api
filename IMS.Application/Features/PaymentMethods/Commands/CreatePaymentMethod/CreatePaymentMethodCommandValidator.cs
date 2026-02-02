@@ -16,7 +16,7 @@ namespace IMS.Application.Features.PaymentMethods.Commands.CreatePaymentMethod
             RuleFor(x => x.MethodName)
                 .NotEmpty().WithMessage("The MethodName field is required.")
                 .IsEnumName(typeof(PaymentMethodEnum), caseSensitive: false).WithMessage("MethodName must be a valid payment method.")
-                .MustAsync(ShouldNotExist).WithMessage(m => $"Payment method ${m.MethodName} already exist.");
+                .MustAsync(ShouldNotExist).WithMessage(m => $"Payment method {m.MethodName} already exist.");
 
             RuleFor(x => x.AccountName)
                 .NotEmpty().WithMessage("The AccountName field is required.");
@@ -28,7 +28,7 @@ namespace IMS.Application.Features.PaymentMethods.Commands.CreatePaymentMethod
         private async Task<bool> ShouldNotExist(string methodName, CancellationToken token)
         {
             return !await _context.PaymentMethods
-                .AnyAsync(pm => pm.MethodName.ToString().Equals(methodName, StringComparison.OrdinalIgnoreCase), token);
+                .AnyAsync(pm => pm.MethodName.ToString().ToLower() == methodName.ToLower(), token);
         }
     }
 }
