@@ -1,6 +1,7 @@
 ﻿using IMS.Application.Common.Models;
 using IMS.Application.Features.Applications.Queries;
 using IMS.Application.Features.InternetPlans.Commands.CreateInternetPlan;
+using IMS.Application.Features.InternetPlans.Commands.UpdateInternetPlan;
 using IMS.Application.Features.InternetPlans.Queries;
 using IMS.WebApi.Common;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,22 @@ namespace IMS.WebApi.Controllers
                 return StatusCode(201, ApiResponse<Guid>.Success(result, "Internet Plan successfully created."));
 
             return BadRequest(ApiResponse<object>.Failure(["Empty Guid"], "Failed to create internet plan."));
+        }
+
+        [HttpPost("update")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<Guid>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateInternetPlan([FromBody] UpdateInternetPlanCommand command)
+        {
+            var result = await Mediator.Send(command);
+
+            if (result)
+                return Ok(ApiResponse<Guid>.Success(message: "Internet Plan successfully updated."));
+
+            return BadRequest(ApiResponse<object>.Failure(["Empty Guid"], "Failed to update internet plan."));
         }
 
         [HttpGet]
