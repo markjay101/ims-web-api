@@ -1,5 +1,6 @@
 ﻿using IMS.Application.Common.Models;
 using IMS.Application.Features.Modems.Commands.CreateModem;
+using IMS.Application.Features.Modems.Commands.UpdateModem;
 using IMS.Application.Features.Modems.Queries;
 using IMS.WebApi.Common;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,22 @@ namespace IMS.WebApi.Controllers
                 return StatusCode(201, ApiResponse<Guid>.Success(result, "Modem successfully created."));
 
             return BadRequest(ApiResponse<object>.Failure(["Empty Guid"], "Failed to create modem."));
+        }
+
+        [HttpPost("update")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<Guid>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UdpateModem([FromBody] UpdateModemCommand command)
+        {
+            var result = await Mediator.Send(command);
+
+            if (result)
+                return Ok(ApiResponse<Guid>.Success(message: "Modem successfully updated."));
+
+            return BadRequest(ApiResponse<object>.Failure(["Empty Guid"], "Failed to update modem."));
         }
 
         [HttpGet]
