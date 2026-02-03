@@ -6,6 +6,9 @@ namespace IMS.Application.Features.Modems.Commands.CreateModem
     {
         public CreateModemCommandValidator()
         {
+            RuleFor(x => x.Model)
+                .NotEmpty().WithMessage("The Model field is required.");
+
             RuleFor(x => x.SerialNumber)
                 .NotEmpty().WithMessage("The SerialNumber field is required.");
 
