@@ -18,6 +18,5 @@ namespace IMS.Application.Features.Modems.Commands.UpdateModem
 
             return result > 0;
         }
-    {
     }
 }
