@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace IMS.Infrastructure.Persistence
 {
     public class ApplicationDbContextInitializer(
-        ApplicationDbContext context, 
+        ApplicationDbContext context,
         UserManager<User> userManager)
     {
         public async Task InitializeAsync()
@@ -76,8 +76,37 @@ namespace IMS.Infrastructure.Persistence
                 };
 
                 await context.InternetPlans.AddRangeAsync(plans);
-                await context.SaveChangesAsync();
+
             }
+
+            if (!await context.Modems.AnyAsync())
+            {
+                var modems = new List<Modem>
+                {
+                    new() {
+                        Model = "Fiber Starter",
+                        SerialNumber = "SN-9920-X1",
+                        MacAddress = "00:1A:2B:3C:4D:5E",
+                    },
+                    new()
+                    {
+                        Model = "Giga Blast",
+                        SerialNumber = "SN-8841-Y2",
+                        MacAddress = "4E:D2:F1:A0:BC:33",
+                    },
+                    new()
+                    {
+                        Model = "Home Office Pro",
+                        SerialNumber = "SN-7722-Z3",
+                        MacAddress = "BC:88:12:34:56:78",
+                    }
+                };
+
+                await context.Modems.AddRangeAsync(modems);
+
+            }
+
+            await context.SaveChangesAsync();
         }
     }
 }
