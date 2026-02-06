@@ -8,8 +8,6 @@ using MediatR;
 
 namespace IMS.Application.Features.InternetPlans.Queries
 {
-    [Authorize(Role = UserRoles.SuperAdmin)]
-    [Authorize(Role = UserRoles.Admin)]
     public record GetInternetPlansQuery(int PageNumber = 1, int PageSize = 25) : IRequest<PaginatedList<InternetPlanDto>>;
 
     public class GetInternetPlansQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetInternetPlansQuery, PaginatedList<InternetPlanDto>>
