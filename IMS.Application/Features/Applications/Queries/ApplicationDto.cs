@@ -15,5 +15,8 @@ namespace IMS.Application.Features.Applications.Queries
         public string PostalCode { get; set; } = string.Empty;
         public ApplicationStatus Status { get; set; }
         public Guid InternetPlanId { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public string? UpdatedBy { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

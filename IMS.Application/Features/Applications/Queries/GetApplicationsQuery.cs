@@ -4,19 +4,24 @@ using IMS.Application.Common.Interfaces;
 using IMS.Application.Common.Mappings;
 using IMS.Application.Common.Models;
 using IMS.Application.Common.Security;
+using IMS.Domain.Common.Enums;
 using MediatR;
 
 namespace IMS.Application.Features.Applications.Queries
 {
     [Authorize(Role = UserRoles.SuperAdmin)]
     [Authorize(Role = UserRoles.Admin)]
-    public record GetApplicationsQuery(int PageNumber = 1, int PageSize = 25) : IRequest<PaginatedList<ApplicationDto>>;
+    public record GetApplicationsQuery(int PageNumber = 1, int PageSize = 25, ApplicationStatus? Status = null) : IRequest<PaginatedList<ApplicationDto>>;
     public class GetApplicationsQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetApplicationsQuery, PaginatedList<ApplicationDto>>
     {
         public async Task<PaginatedList<ApplicationDto>> Handle(GetApplicationsQuery request, CancellationToken cancellationToken)
         {
-            return await context.Applications
-                                .ProjectTo<ApplicationDto>(mapper.ConfigurationProvider)
+            var query = context.Applications.AsQueryable();
+
+            if(request.Status.HasValue)
+                query = query.Where(a => a.Status == request.Status.Value);
+
+            return await query.ProjectTo<ApplicationDto>(mapper.ConfigurationProvider)
                                 .PaginatedListAsync(request.PageNumber, request.PageSize);
         }
     }

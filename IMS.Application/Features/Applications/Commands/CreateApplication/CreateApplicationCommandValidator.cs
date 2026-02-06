@@ -20,7 +20,8 @@ namespace IMS.Application.Features.Applications.Commands.CreateApplication
 
             RuleFor(v => v.Email)
                 .NotEmpty().WithMessage("The Email field is required.")
-                .EmailAddress().WithMessage("Email should be a valid Email Address.");
+                .EmailAddress().WithMessage("Email should be a valid Email Address.")
+                .MustAsync(EmailShouldBeUnique).WithMessage("The Email is already use.");
 
             RuleFor(v => v.ContactNumber)
                .NotEmpty().WithMessage("The ContactNumber field is required.")
@@ -42,6 +43,19 @@ namespace IMS.Application.Features.Applications.Commands.CreateApplication
                 .NotEmpty().WithMessage("The InternetPlanId field is required.")
                 .Must(ValidGuid).WithMessage("The format of the ID is invalid.")
                 .MustAsync(InternetPlanShouldExist).WithMessage("The Internet Plan does not exist.");
+        }
+
+        private async Task<bool> EmailShouldBeUnique(string email, CancellationToken token)
+        {
+            var e = email.ToLower();
+
+            if (await _context.Applications.AnyAsync(a => a.Email.ToLower() == e, token))
+                return false;
+
+            if (await _context.Customers.AnyAsync(c => c.Email.ToLower() == e, token))
+                return false;
+
+            return true;
         }
 
         private bool ValidGuid(string guid)
