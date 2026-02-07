@@ -61,5 +61,23 @@ namespace IMS.WebApi.Controllers
 
             return StatusCode(StatusCodes.Status204NoContent, ApiResponse<PaginatedList<InternetPlanDto>>.Success(result, "No internet plans found."));
         }
+
+        [HttpGet("{id}")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<InternetPlanDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<InternetPlanDto>), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetInternetPlanById([FromRoute] string id)
+        {
+            var query = new GetInternetPlanByIdQuery(Guid.Parse(id));
+            var result = await Mediator.Send(query);
+
+            if (result is not null)
+                return Ok(ApiResponse<InternetPlanDto>.Success(result));
+
+            return StatusCode(StatusCodes.Status204NoContent, ApiResponse<InternetPlanDto>.Success(message: "No internet plans found."));
+        }
     }
 }
