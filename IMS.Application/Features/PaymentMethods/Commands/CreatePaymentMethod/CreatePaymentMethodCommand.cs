@@ -7,14 +7,14 @@ using MediatR;
 namespace IMS.Application.Features.PaymentMethods.Commands.CreatePaymentMethod
 {
     [Authorize(Role = UserRoles.SuperAdmin)]
-    public record CreatePaymentMethodCommand(string MethodName, string AccountName, string AccountNumber) : IRequest<Guid>;
+    public record CreatePaymentMethodCommand(PaymentMethodEnum MethodName, string AccountName, string AccountNumber) : IRequest<Guid>;
     public class CreatePaymentMethodCommandHandler(IApplicationDbContext context) : IRequestHandler<CreatePaymentMethodCommand, Guid>
     {
         public async Task<Guid> Handle(CreatePaymentMethodCommand request, CancellationToken cancellationToken)
         {
             var newPaymentMethod = new PaymentMethod
             {
-                MethodName = Enum.Parse<PaymentMethodEnum>(request.MethodName),
+                MethodName = request.MethodName,
                 AccountName = request.AccountName,
                 AccountNumber = request.AccountNumber
             };

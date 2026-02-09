@@ -1,5 +1,4 @@
 ﻿using IMS.Application.Features.Payments.Queries;
-using IMS.Domain.Common.Enums;
 
 namespace IMS.Application.Features.Invoices.Queries
 {
@@ -9,7 +8,7 @@ namespace IMS.Application.Features.Invoices.Queries
         public Guid CustomerId { get; set; }
         public decimal Amount { get; set; }
         public DateTime DueDate { get; set; }
-        public InvoiceStatus Status { get; set; }
+        public string Status { get; set; } = null!;
         public DateTime IssueDate { get; set; }
 
         public PaymentDto? Payment { get; set; }

@@ -12,7 +12,7 @@ namespace IMS.Application.Features.Customers.Queries
         public string City { get; set; } = null!;
         public string Country { get; set; } = null!;
         public string PostalCode { get; set; } = null!;
-        public CustomerStatus Status { get; set; }
+        public string Status { get; set; } = null!;
         public Guid? ModemId { get; set; }
     }
 }

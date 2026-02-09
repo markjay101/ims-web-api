@@ -13,7 +13,7 @@ namespace IMS.Application.Features.Applications.Queries
         public string City { get; set; } = string.Empty;
         public string Country { get; set; } = string.Empty;
         public string PostalCode { get; set; } = string.Empty;
-        public ApplicationStatus Status { get; set; }
+        public string Status { get; set; } = null!;
         public Guid InternetPlanId { get; set; }
         public DateTime CreatedAt { get; set; }
         public string? UpdatedBy { get; set; }
