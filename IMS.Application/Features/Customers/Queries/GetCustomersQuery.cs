@@ -29,8 +29,7 @@ namespace IMS.Application.Features.Customers.Queries
             if (request.Status.HasValue)
                 query = query.Where(a => a.Status == request.Status.Value);
 
-            return await context.Customers
-                .ProjectTo<CustomerDto>(mapper.ConfigurationProvider)
+            return await query.ProjectTo<CustomerDto>(mapper.ConfigurationProvider)
                 .PaginatedListAsync(request.PageNumber, request.PageSize);
         }
     }
