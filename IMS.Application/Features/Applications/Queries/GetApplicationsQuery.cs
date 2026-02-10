@@ -11,14 +11,22 @@ namespace IMS.Application.Features.Applications.Queries
 {
     [Authorize(Role = UserRoles.SuperAdmin)]
     [Authorize(Role = UserRoles.Admin)]
-    public record GetApplicationsQuery(int PageNumber = 1, int PageSize = 25, ApplicationStatus? Status = null) : IRequest<PaginatedList<ApplicationDto>>;
+    public record GetApplicationsQuery(int PageNumber = 1, int PageSize = 25, string? SearchTerm = null, ApplicationStatus? Status = null) : IRequest<PaginatedList<ApplicationDto>>;
     public class GetApplicationsQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetApplicationsQuery, PaginatedList<ApplicationDto>>
     {
         public async Task<PaginatedList<ApplicationDto>> Handle(GetApplicationsQuery request, CancellationToken cancellationToken)
         {
             var query = context.Applications.AsQueryable();
 
-            if(request.Status.HasValue)
+            if (!string.IsNullOrEmpty(request.SearchTerm))
+            {
+                var searchTerm = request.SearchTerm.ToLower();
+                query = query.Where(a => a.FirstName.ToLower() == searchTerm
+                                        || a.LastName.ToLower() == searchTerm
+                                        || a.Email.ToLower() == searchTerm);
+            }
+
+            if (request.Status.HasValue)
                 query = query.Where(a => a.Status == request.Status.Value);
 
             return await query.ProjectTo<ApplicationDto>(mapper.ConfigurationProvider)
