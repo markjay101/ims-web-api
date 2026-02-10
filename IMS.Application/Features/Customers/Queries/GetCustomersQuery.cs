@@ -4,6 +4,7 @@ using IMS.Application.Common.Interfaces;
 using IMS.Application.Common.Mappings;
 using IMS.Application.Common.Models;
 using IMS.Application.Common.Security;
+using IMS.Domain.Common.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,11 +12,23 @@ namespace IMS.Application.Features.Customers.Queries
 {
     [Authorize(Role = UserRoles.SuperAdmin)]
     [Authorize(Role = UserRoles.Admin)]
-    public record GetCustomersQuery(int PageNumber = 1, int PageSize = 25) : IRequest<PaginatedList<CustomerDto>>;
+    public record GetCustomersQuery(int PageNumber = 1, int PageSize = 25, string? SearchTerm = null, CustomerStatus? Status = null) : IRequest<PaginatedList<CustomerDto>>;
     public class GetCustomersQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetCustomersQuery, PaginatedList<CustomerDto>>
     {
         public async Task<PaginatedList<CustomerDto>> Handle(GetCustomersQuery request, CancellationToken cancellationToken)
         {
+            var query = context.Customers.AsQueryable();
+
+            if (!string.IsNullOrEmpty(request.SearchTerm))
+            {
+                query = query.Where(a => a.Application.FirstName.Contains(request.SearchTerm)
+                                        || a.Application.LastName.Contains(request.SearchTerm)
+                                        || a.Email.Contains(request.SearchTerm));
+            }
+
+            if (request.Status.HasValue)
+                query = query.Where(a => a.Status == request.Status.Value);
+
             return await context.Customers
                 .ProjectTo<CustomerDto>(mapper.ConfigurationProvider)
                 .PaginatedListAsync(request.PageNumber, request.PageSize);

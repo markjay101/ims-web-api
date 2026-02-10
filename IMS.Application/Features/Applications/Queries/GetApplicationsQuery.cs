@@ -20,10 +20,9 @@ namespace IMS.Application.Features.Applications.Queries
 
             if (!string.IsNullOrEmpty(request.SearchTerm))
             {
-                var searchTerm = request.SearchTerm.ToLower();
-                query = query.Where(a => a.FirstName.ToLower() == searchTerm
-                                        || a.LastName.ToLower() == searchTerm
-                                        || a.Email.ToLower() == searchTerm);
+                query = query.Where(a => a.FirstName.Contains(request.SearchTerm)
+                                        || a.LastName.Contains(request.SearchTerm)
+                                        || a.Email.Contains(request.SearchTerm)) ;
             }
 
             if (request.Status.HasValue)
