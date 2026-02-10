@@ -24,7 +24,13 @@ namespace IMS.Application.Common.Mappings
                 .ForMember(dest => dest.Status, opt => opt.Ignore())
                 .ForMember(dest => dest.ApplicationId, opt => opt.MapFrom(src => src.Id));
 
-            CreateMap<Customer, CustomerDto>();
+            CreateMap<Customer, CustomerDto>()
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Application.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Application.LastName));
+
+            CreateMap<CustomerPlan, CustomerPlanDto>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.InternetPlan.Name))
+                .ForMember(dest => dest.SpeedMbps, opt => opt.MapFrom(src => src.InternetPlan.SpeedMbps));
 
             CreateMap<InternetPlan, InternetPlanDto>();
 

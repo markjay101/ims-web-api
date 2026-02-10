@@ -7,5 +7,7 @@
         public Guid CustomerId { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? NextDueDate { get; set; }
+
+        public InternetPlan InternetPlan { get; set; } = null!;
     }
 }

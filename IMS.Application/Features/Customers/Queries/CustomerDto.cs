@@ -1,4 +1,4 @@
-﻿using IMS.Domain.Common.Enums;
+﻿using IMS.Application.Features.Modems.Queries;
 
 namespace IMS.Application.Features.Customers.Queries
 {
@@ -6,6 +6,8 @@ namespace IMS.Application.Features.Customers.Queries
     {
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string ContactNumber { get; set; } = null!;
         public string Address { get; set; } = null!;
@@ -13,6 +15,8 @@ namespace IMS.Application.Features.Customers.Queries
         public string Country { get; set; } = null!;
         public string PostalCode { get; set; } = null!;
         public string Status { get; set; } = null!;
-        public Guid? ModemId { get; set; }
+
+        public ModemDto? Modem { get; set; }
+        public CustomerPlanDto Plan { get; set; } = new();
     }
 }

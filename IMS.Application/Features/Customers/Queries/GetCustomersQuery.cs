@@ -5,6 +5,7 @@ using IMS.Application.Common.Mappings;
 using IMS.Application.Common.Models;
 using IMS.Application.Common.Security;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace IMS.Application.Features.Customers.Queries
 {
@@ -16,6 +17,8 @@ namespace IMS.Application.Features.Customers.Queries
         public async Task<PaginatedList<CustomerDto>> Handle(GetCustomersQuery request, CancellationToken cancellationToken)
         {
             return await context.Customers
+                .Include(c => c.Plan)
+                .AsSplitQuery()
                 .ProjectTo<CustomerDto>(mapper.ConfigurationProvider)
                 .PaginatedListAsync(request.PageNumber, request.PageSize);
         }
