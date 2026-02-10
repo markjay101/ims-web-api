@@ -30,7 +30,9 @@ namespace IMS.Application.Common.Mappings
 
             CreateMap<CustomerPlan, CustomerPlanDto>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.InternetPlan.Name))
-                .ForMember(dest => dest.SpeedMbps, opt => opt.MapFrom(src => src.InternetPlan.SpeedMbps));
+                .ForMember(dest => dest.SpeedMbps, opt => opt.MapFrom(src => src.InternetPlan.SpeedMbps))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.InternetPlan.Price))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.InternetPlan.Description));
 
             CreateMap<InternetPlan, InternetPlanDto>();
 
