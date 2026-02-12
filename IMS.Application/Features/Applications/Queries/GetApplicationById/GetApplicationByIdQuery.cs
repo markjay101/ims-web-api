@@ -3,7 +3,7 @@ using IMS.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace IMS.Application.Features.Applications.Queries
+namespace IMS.Application.Features.Applications.Queries.GetApplicationById
 {
     public record GetApplicationByIdQuery(string Id) : IRequest<ApplicationDto?>;
     public class GetApplicationByIdQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetApplicationByIdQuery, ApplicationDto?>

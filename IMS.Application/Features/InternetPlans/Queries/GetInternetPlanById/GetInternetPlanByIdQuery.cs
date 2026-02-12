@@ -5,18 +5,19 @@ using IMS.Application.Common.Security;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace IMS.Application.Features.InternetPlans.Queries
+namespace IMS.Application.Features.InternetPlans.Queries.GetInternetPlanById
 {
     [Authorize]
-    public record GetInternetPlanByIdQuery(Guid Id) : IRequest<InternetPlanDto?>;
+    public record GetInternetPlanByIdQuery(string Id) : IRequest<InternetPlanDto?>;
     public class GetInternetPlanByIdQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetInternetPlanByIdQuery, InternetPlanDto?>
     {
         public async Task<InternetPlanDto?> Handle(GetInternetPlanByIdQuery request, CancellationToken cancellationToken)
         {
-            return await context.InternetPlans.AsNoTracking()
-                                        .Where(ip => ip.Id == request.Id)
-                                        .ProjectTo<InternetPlanDto>(mapper.ConfigurationProvider)
-                                        .FirstOrDefaultAsync(cancellationToken);
+            var guid = Guid.Parse(request.Id);
+
+            var internetPlan = await context.InternetPlans.AsNoTracking().FirstOrDefaultAsync(ip => ip.Id == guid, cancellationToken);
+
+            return mapper.Map<InternetPlanDto>(internetPlan);
         }
     }
 }

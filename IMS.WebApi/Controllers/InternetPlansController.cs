@@ -1,11 +1,10 @@
 ﻿using IMS.Application.Common.Models;
-using IMS.Application.Features.Applications.Queries;
 using IMS.Application.Features.InternetPlans.Commands.CreateInternetPlan;
 using IMS.Application.Features.InternetPlans.Commands.UpdateInternetPlan;
 using IMS.Application.Features.InternetPlans.Queries;
+using IMS.Application.Features.InternetPlans.Queries.GetInternetPlanById;
 using IMS.WebApi.Common;
 using Microsoft.AspNetCore.Mvc;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace IMS.WebApi.Controllers
 {
@@ -71,13 +70,13 @@ namespace IMS.WebApi.Controllers
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetInternetPlanById([FromRoute] string id)
         {
-            var query = new GetInternetPlanByIdQuery(Guid.Parse(id));
+            var query = new GetInternetPlanByIdQuery(id);
             var result = await Mediator.Send(query);
 
             if (result is not null)
                 return Ok(ApiResponse<InternetPlanDto>.Success(result));
 
-            return StatusCode(StatusCodes.Status204NoContent, ApiResponse<InternetPlanDto>.Success(message: "No internet plans found."));
+            return StatusCode(StatusCodes.Status204NoContent, ApiResponse<InternetPlanDto>.Success(message: $"Internet Plan with id {id} is not found."));
         }
     }
 }
