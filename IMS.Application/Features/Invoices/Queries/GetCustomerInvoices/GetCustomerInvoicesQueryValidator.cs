@@ -13,7 +13,7 @@ namespace IMS.Application.Features.Invoices.Queries.GetCustomerInvoices
             _context = context;
 
             RuleFor(x => x.CustomerId)
-                .Must(ValidGuid).WithMessage("The CustomerId is invalid.")
+                .Must(ValidGuid).WithMessage("Id is not a valid Customer Id.")
                 .MustAsync(CustomerExists).WithMessage("Customer does not exist.");
         }
 
