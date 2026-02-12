@@ -1,6 +1,7 @@
 ﻿using IMS.Application.Common.Models;
 using IMS.Application.Features.Customers.Commands.UpdateCustomerStatus;
 using IMS.Application.Features.Customers.Queries;
+using IMS.Application.Features.Customers.Queries.GetCustomerById;
 using IMS.Application.Features.Invoices.Queries;
 using IMS.Application.Features.Invoices.Queries.GetCustomerInvoices;
 using IMS.WebApi.Common;
@@ -41,6 +42,25 @@ namespace IMS.WebApi.Controllers
                 return Ok(ApiResponse<PaginatedList<CustomerDto>>.Success(result));
 
             return StatusCode(204, ApiResponse<PaginatedList<CustomerDto>>.Success(result, "No Customers found."));
+        }
+
+        [HttpGet("{id}")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<CustomerDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<CustomerDto>), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetCustomerById([FromRoute] string id)
+        {
+            var query = new GetCustomerByIdQuery(id);
+
+            var result = await Mediator.Send(query);
+
+            if (result != null)
+                return Ok(ApiResponse<CustomerDto>.Success(result));
+
+            return StatusCode(204, ApiResponse<CustomerDto>.Success(result, $"Customer with id {id} is not found."));
         }
 
         [HttpGet("{customerId}/invoices")]
