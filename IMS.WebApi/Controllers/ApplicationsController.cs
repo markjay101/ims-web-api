@@ -3,6 +3,7 @@ using IMS.Application.Common.Security;
 using IMS.Application.Features.Applications.Commands.CreateApplication;
 using IMS.Application.Features.Applications.Commands.UpdateApplicationStatus;
 using IMS.Application.Features.Applications.Queries;
+using IMS.Application.Features.Applications.Queries.GetApplicationById;
 using IMS.WebApi.Common;
 using Microsoft.AspNetCore.Mvc;
 
@@ -55,6 +56,23 @@ namespace IMS.WebApi.Controllers
                 return Ok(ApiResponse<PaginatedList<ApplicationDto>>.Success(result));
 
             return StatusCode(StatusCodes.Status204NoContent, ApiResponse<PaginatedList<ApplicationDto>>.Success(result, "No applications found."));
+        }
+
+        [HttpGet("{id}")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<ApplicationDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<ApplicationDto>), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetApplications([FromRoute] string id)
+        {
+            var query = new GetApplicationByIdQuery(id);
+            var result = await Mediator.Send(query);
+
+            if (result != null)
+                return Ok(ApiResponse<ApplicationDto>.Success(result));
+
+            return StatusCode(StatusCodes.Status204NoContent, ApiResponse<ApplicationDto>.Success(result, $"Application with id {id} is not found."));
         }
     }
 }
