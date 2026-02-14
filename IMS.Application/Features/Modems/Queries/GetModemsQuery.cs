@@ -10,13 +10,18 @@ namespace IMS.Application.Features.Modems.Queries
 {
     [Authorize(Role = UserRoles.SuperAdmin)]
     [Authorize(Role = UserRoles.Admin)]
-    public record GetModemsQuery(int PageNumber = 1, int PageSize = 25) : IRequest<PaginatedList<ModemDto>>;
+    public record GetModemsQuery(int PageNumber = 1, int PageSize = 25, string? SearchTerm = null) : IRequest<PaginatedList<ModemDto>>;
     public class GetModemsQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetModemsQuery, PaginatedList<ModemDto>>
     {
         public async Task<PaginatedList<ModemDto>> Handle(GetModemsQuery request, CancellationToken cancellationToken)
         {
-            return await context.Modems
-                                .ProjectTo<ModemDto>(mapper.ConfigurationProvider)
+            var query = context.Modems.AsQueryable();
+
+            if (!string.IsNullOrEmpty(request.SearchTerm))
+                query = query.Where(m => m.Model.Contains(request.SearchTerm)
+                                        || m.SerialNumber.Contains(request.SearchTerm));
+
+            return await query.ProjectTo<ModemDto>(mapper.ConfigurationProvider)
                                 .PaginatedListAsync(request.PageNumber, request.PageSize);
         }
     }
