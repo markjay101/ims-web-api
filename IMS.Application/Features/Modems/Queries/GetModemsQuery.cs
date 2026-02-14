@@ -5,6 +5,7 @@ using IMS.Application.Common.Mappings;
 using IMS.Application.Common.Models;
 using IMS.Application.Common.Security;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace IMS.Application.Features.Modems.Queries
 {
@@ -15,11 +16,15 @@ namespace IMS.Application.Features.Modems.Queries
     {
         public async Task<PaginatedList<ModemDto>> Handle(GetModemsQuery request, CancellationToken cancellationToken)
         {
-            var query = context.Modems.AsQueryable();
+            var query = context.Modems.Include(m => m.Customer).AsQueryable();
 
             if (!string.IsNullOrEmpty(request.SearchTerm))
                 query = query.Where(m => m.Model.Contains(request.SearchTerm)
-                                        || m.SerialNumber.Contains(request.SearchTerm));
+                                        || m.SerialNumber.Contains(request.SearchTerm)
+                                        || (m.Customer != null 
+                                            && (m.Customer.Email.Contains(request.SearchTerm) 
+                                                || m.Customer.Application.FirstName.Contains(request.SearchTerm)
+                                                || m.Customer.Application.LastName.Contains(request.SearchTerm))));
 
             return await query.ProjectTo<ModemDto>(mapper.ConfigurationProvider)
                                 .PaginatedListAsync(request.PageNumber, request.PageSize);
