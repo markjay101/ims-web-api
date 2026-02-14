@@ -1,4 +1,5 @@
 ﻿using IMS.Application.Common.Models;
+using IMS.Application.Features.Customers.Commands.AssignCustomerModem;
 using IMS.Application.Features.Customers.Commands.UpdateCustomerStatus;
 using IMS.Application.Features.Customers.Queries;
 using IMS.Application.Features.Customers.Queries.GetCustomerById;
@@ -80,6 +81,23 @@ namespace IMS.WebApi.Controllers
                 return Ok(ApiResponse<PaginatedList<InvoiceDto>>.Success(result));
 
             return StatusCode(204, ApiResponse<PaginatedList<InvoiceDto>>.Success(result, "No Customer's Invoices found."));
+        }
+
+        [HttpGet("assign-modem")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<CustomerDto?>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<CustomerDto?>), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> AssignCustomerModem([FromBody] AssignCustomerModemCommand command)
+        {
+            var result = await Mediator.Send(command);
+
+            if (result is not null)
+                return Ok(ApiResponse<CustomerDto?>.Success(result));
+
+            return StatusCode(204, ApiResponse<CustomerDto?>.Success(result, "Failed to assign modem."));
         }
     }
 }
