@@ -65,7 +65,7 @@ namespace IMS.WebApi.Controllers
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAvailableModems([FromBody] GetAvailableModemsQuery query)
+        public async Task<IActionResult> GetAvailableModems([FromQuery] GetAvailableModemsQuery query)
         {
             var result = await Mediator.Send(query);
 
