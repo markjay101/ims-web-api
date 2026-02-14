@@ -83,7 +83,7 @@ namespace IMS.WebApi.Controllers
             return StatusCode(204, ApiResponse<PaginatedList<InvoiceDto>>.Success(result, "No Customer's Invoices found."));
         }
 
-        [HttpGet("assign-modem")]
+        [HttpPost("assign-modem")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ApiResponse<CustomerDto?>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<CustomerDto?>), StatusCodes.Status204NoContent)]
