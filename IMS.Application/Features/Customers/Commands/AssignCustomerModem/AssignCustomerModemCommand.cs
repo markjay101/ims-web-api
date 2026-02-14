@@ -2,6 +2,7 @@
 using IMS.Application.Common.Interfaces;
 using IMS.Application.Common.Security;
 using IMS.Application.Features.Customers.Queries;
+using IMS.Domain.Common.Enums;
 using MediatR;
 
 namespace IMS.Application.Features.Customers.Commands.AssignCustomerModem
@@ -17,6 +18,7 @@ namespace IMS.Application.Features.Customers.Commands.AssignCustomerModem
 
             if(customer != null)
             {
+                customer.Status = CustomerStatus.Active;
                 customer.ModemId = Guid.Parse(request.ModemId);
 
                 await context.SaveChangesAsync();

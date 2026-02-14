@@ -57,5 +57,22 @@ namespace IMS.WebApi.Controllers
 
             return StatusCode(StatusCodes.Status204NoContent, ApiResponse<PaginatedList<ModemDto>>.Success(result, "No modems found."));
         }
+
+        [HttpGet("available")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<List<ModemDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<List<ModemDto>>), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAvailableModems([FromBody] GetAvailableModemsQuery query)
+        {
+            var result = await Mediator.Send(query);
+
+            if (result.Count > 0)
+                return Ok(ApiResponse<List<ModemDto>>.Success(result));
+
+            return StatusCode(StatusCodes.Status204NoContent, ApiResponse<List<ModemDto>>.Success(result, "No available modems."));
+        }
     }
 }
