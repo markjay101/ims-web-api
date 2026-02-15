@@ -1,4 +1,5 @@
-﻿using IMS.Domain.Entities;
+﻿using IMS.Application.Features.Dashboard.Queries;
+using IMS.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace IMS.Application.Common.Interfaces
@@ -16,5 +17,7 @@ namespace IMS.Application.Common.Interfaces
         DbSet<Modem> Modems { get; }
         DbSet<Payment> Payments { get; }
         DbSet<PaymentMethod> PaymentMethods { get; }
+        public DbSet<SuperAdminDashboardSummaryDto> SuperAdminDashboardSummary { get; }
+        public DbSet<AdminDashboardSummaryDto> AdminDashboardSummary { get; }
     }
 }

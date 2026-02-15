@@ -1,4 +1,5 @@
 ﻿using IMS.Application.Common.Interfaces;
+using IMS.Application.Features.Dashboard.Queries;
 using IMS.Domain.Common.Interfaces;
 using IMS.Domain.Entities;
 using MediatR;
@@ -49,5 +50,7 @@ namespace IMS.Infrastructure.Persistence
         public DbSet<Modem> Modems => Set<Modem>();
         public DbSet<Payment> Payments => Set<Payment>();
         public DbSet<PaymentMethod> PaymentMethods => Set<PaymentMethod>();
+        public DbSet<SuperAdminDashboardSummaryDto> SuperAdminDashboardSummary => Set<SuperAdminDashboardSummaryDto>();
+        public DbSet<AdminDashboardSummaryDto> AdminDashboardSummary => Set<AdminDashboardSummaryDto>();
     }
 }
