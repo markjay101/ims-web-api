@@ -17,7 +17,7 @@ namespace IMS.Application.Common.Interfaces
         DbSet<Modem> Modems { get; }
         DbSet<Payment> Payments { get; }
         DbSet<PaymentMethod> PaymentMethods { get; }
-        public DbSet<SuperAdminDashboardSummaryDto> SuperAdminDashboardSummary { get; }
-        public DbSet<AdminDashboardSummaryDto> AdminDashboardSummary { get; }
+        DbSet<SuperAdminDashboardSummaryDto> SuperAdminDashboardSummary { get; }
+        DbSet<AdminDashboardSummaryDto> AdminDashboardSummary { get; }
     }
 }
