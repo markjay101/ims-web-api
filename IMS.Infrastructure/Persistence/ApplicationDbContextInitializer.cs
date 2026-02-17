@@ -38,6 +38,17 @@ namespace IMS.Infrastructure.Persistence
                 Role = Role.SuperAdmin
             };
 
+            var adminEmail = "admin@gmail.com";
+            var admin = new User
+            {
+                UserName = adminEmail,
+                FirstName = "Admin",
+                LastName = "Admin",
+                Email = adminEmail,
+                EmailConfirmed = true,
+                Role = Role.Admin
+            };
+
             if (userManager.Users.All(u => u.UserName != superAdmin.UserName))
             {
                 var result = await userManager.CreateAsync(superAdmin, "SuperAdmin123!");
@@ -50,6 +61,21 @@ namespace IMS.Infrastructure.Persistence
                 {
                     var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                     Console.WriteLine("Failed to seed SuperAdmin: {Errors}", errors);
+                }
+            }
+
+            if (userManager.Users.All(u => u.UserName != admin.UserName))
+            {
+                var result = await userManager.CreateAsync(admin, "Admin123!");
+
+                if (result.Succeeded)
+                {
+                    Console.WriteLine("Admin user seeded successfully.");
+                }
+                else
+                {
+                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                    Console.WriteLine("Failed to seed Admin: {Errors}", errors);
                 }
             }
 
