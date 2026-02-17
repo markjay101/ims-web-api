@@ -29,7 +29,7 @@ namespace IMS.Application.Features.Users.Commands.CreateUserAdminOrSuperAdmin
             var defaultPassword = $"{char.ToUpper(namePart[0])}{namePart[1..]}@{shortGuid}!";
 
             newAdmin.Password = defaultPassword;
-            newAdmin.AddDomainEvent(new CreateUserEvent(newAdmin));
+            newAdmin.AddDomainEvent(new CreatedUserEvent(newAdmin));
 
             var result = await userManager.CreateAsync(newAdmin, defaultPassword);
 

@@ -4,9 +4,9 @@ using MediatR;
 
 namespace IMS.Application.Features.Users.EventHandlers
 {
-    public class CreatedUserEventHandler(IEmailService emailService) : INotificationHandler<CreateUserEvent>
+    public class CreatedUserEventHandler(IEmailService emailService) : INotificationHandler<CreatedUserEvent>
     {
-        public async Task Handle(CreateUserEvent notification, CancellationToken cancellationToken)
+        public async Task Handle(CreatedUserEvent notification, CancellationToken cancellationToken)
         {
             await emailService.SendEmailAsync(
                 to: notification.User.Email!,
