@@ -12,7 +12,7 @@ namespace IMS.Domain.Common
         [NotMapped]
         public IReadOnlyList<BaseEvent> DomainEvents => _domainEvents;
 
-        protected void AddDomainEvent(BaseEvent eventItem)
+        public void AddDomainEvent(BaseEvent eventItem)
         {
             _domainEvents.Add(eventItem);
         }
