@@ -3,7 +3,9 @@ using IMS.Application.Common.Interfaces;
 using IMS.Application.Common.Security;
 using IMS.Application.Features.Customers.Queries;
 using IMS.Domain.Common.Enums;
+using IMS.Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace IMS.Application.Features.Customers.Commands.AssignCustomerModem
 {
@@ -14,12 +16,20 @@ namespace IMS.Application.Features.Customers.Commands.AssignCustomerModem
     {
         public async Task<CustomerDto?> Handle(AssignCustomerModemCommand request, CancellationToken cancellationToken)
         {
-            var customer = await context.Customers.FindAsync(Guid.Parse(request.CustomerId));
+            var customerGuid = Guid.Parse(request.CustomerId);
+            var customer = await context.Customers.Include(c => c.Plan).FirstOrDefaultAsync(c => c.Id == customerGuid);
 
             if(customer != null)
             {
                 customer.Status = CustomerStatus.Active;
                 customer.ModemId = Guid.Parse(request.ModemId);
+
+                if(customer.Plan != null)
+                {
+                    var dateNow = DateTime.UtcNow;
+                    customer.Plan.StartDate = dateNow;
+                    customer.Plan.NextDueDate = dateNow.AddMonths(1);
+                }
 
                 await context.SaveChangesAsync();
 

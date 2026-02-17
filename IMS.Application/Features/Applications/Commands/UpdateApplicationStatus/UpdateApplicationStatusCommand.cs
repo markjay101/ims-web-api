@@ -23,6 +23,14 @@ namespace IMS.Application.Features.Applications.Commands.UpdateApplicationStatus
                 var newCustomer = mapper.Map<Customer>(application);
 
                 await context.Customers.AddAsync(newCustomer, cancellationToken);
+
+                var customerPlan = new CustomerPlan
+                {
+                    CustomerId = newCustomer.Id,
+                    InternetPlanId = application.InternetPlanId,
+                };
+
+                await context.CustomerPlans.AddAsync(customerPlan, cancellationToken);
             }
 
             var result = await context.SaveChangesAsync(cancellationToken);
