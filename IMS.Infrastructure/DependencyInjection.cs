@@ -1,6 +1,7 @@
 ﻿using IMS.Application.Common.Interfaces;
 using IMS.Domain.Entities;
 using IMS.Infrastructure.Common.Options;
+using IMS.Infrastructure.Email;
 using IMS.Infrastructure.Identity;
 using IMS.Infrastructure.Persistence;
 using IMS.Infrastructure.Persistence.Interceptors;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -19,6 +21,7 @@ namespace IMS.Infrastructure
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config)
         {
             services.Configure<JwtOptions>(config.GetSection(JwtOptions.SectionName));
+            services.Configure<EmailOptions>(config.GetSection(EmailOptions.SectionName));
 
             services.AddDataProtection();
             services.AddScoped<AuditableEntityInterceptor>();
@@ -56,6 +59,11 @@ namespace IMS.Infrastructure
             services.AddHttpContextAccessor();
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddAuthorization();
+
+            services.AddTransient<GmailService>();
+            services.AddSingleton<EmailServiceFactory>();
+            services.AddTransient<IEmailService>(sp =>
+                sp.GetRequiredService<EmailServiceFactory>().GetEmailService());
 
             return services;
         }
