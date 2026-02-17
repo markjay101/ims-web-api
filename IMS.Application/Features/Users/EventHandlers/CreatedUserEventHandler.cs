@@ -11,7 +11,8 @@ namespace IMS.Application.Features.Users.EventHandlers
             await emailService.SendEmailAsync(
                 to: notification.User.Email!,
                 subject: "Welcome to IMS",
-                body: $"Hello {notification.User.FirstName},\n\nYour account has been created successfully.\nPlease use this password '{notification.User.Password}'.\n\nBest regards,\nIMS Team"
+                body: $"Hello {notification.User.FirstName},\n\nYour account has been created successfully.\nPlease use this password '{notification.User.Password}'.\n\nBest regards,\nIMS Team",
+                cancellationToken
             );
         }
     }
