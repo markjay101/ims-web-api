@@ -3,8 +3,9 @@ using IMS.Application.Common.Interfaces;
 using IMS.Application.Features.Users.Commands.SignIn;
 using IMS.Application.Features.Users.Queries;
 using IMS.Domain.Entities;
+using IMS.Infrastructure.Common.Options;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -12,8 +13,9 @@ using System.Text;
 
 namespace IMS.Infrastructure.Identity
 {
-    public class IdentityService(UserManager<User> userManager, IConfiguration configuration, IMapper mapper) : IIdentityService
+    public class IdentityService(UserManager<User> userManager, IOptions<JwtOptions> jwtOptions, IMapper mapper) : IIdentityService
     {
+        private readonly JwtOptions _jwtOptions = jwtOptions.Value;
         public async Task<UserTokenDto?> AuthenticateAsync(string username, string password)
         {
             var user = await userManager.FindByNameAsync(username);
@@ -33,7 +35,7 @@ namespace IMS.Infrastructure.Identity
 
         private string? GenerateJwtToken(User user)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Secret"]!));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Secret));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
@@ -45,12 +47,11 @@ namespace IMS.Infrastructure.Identity
                 new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 
-            var minutes = configuration["JwtSettings:ExpiryMinutes"];
-            var expires = DateTime.UtcNow.AddMinutes(Convert.ToInt32(minutes));
+            var expires = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpiryMinutes);
 
             var token = new JwtSecurityToken(
-                issuer: configuration["JwtSettings:Issuer"],
-                audience: configuration["JwtSettings:Audience"],
+                issuer: _jwtOptions.Issuer,
+                audience: _jwtOptions.Audience,
                 claims: claims,
                 expires: expires,
                 signingCredentials: credentials);

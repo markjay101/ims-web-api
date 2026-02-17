@@ -1,5 +1,6 @@
 ﻿using IMS.Application.Common.Interfaces;
 using IMS.Domain.Entities;
+using IMS.Infrastructure.Common.Options;
 using IMS.Infrastructure.Identity;
 using IMS.Infrastructure.Persistence;
 using IMS.Infrastructure.Persistence.Interceptors;
@@ -17,6 +18,8 @@ namespace IMS.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config)
         {
+            services.Configure<JwtOptions>(config.GetSection(JwtOptions.SectionName));
+
             services.AddDataProtection();
             services.AddScoped<AuditableEntityInterceptor>();
             services.AddDbContext<ApplicationDbContext>((sp, options) =>
@@ -59,6 +62,7 @@ namespace IMS.Infrastructure
                             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSettings:Secret"]!))
                         };
                     });
+
 
             services.AddHttpContextAccessor();
             services.AddScoped<IIdentityService, IdentityService>();
