@@ -1,6 +1,7 @@
 ﻿using IMS.Application.Common.Security;
 using IMS.Domain.Common.Enums;
 using IMS.Domain.Entities;
+using IMS.Domain.Events;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -26,6 +27,9 @@ namespace IMS.Application.Features.Users.Commands.CreateUserAdminOrSuperAdmin
             var shortGuid = Guid.NewGuid().ToString("N")[..6];
             var namePart = new string([.. request.LastName.Take(2)]);
             var defaultPassword = $"{char.ToUpper(namePart[0])}{namePart[1..]}@{shortGuid}!";
+
+            newAdmin.Password = defaultPassword;
+            newAdmin.AddDomainEvent(new CreateUserEvent(newAdmin));
 
             var result = await userManager.CreateAsync(newAdmin, defaultPassword);
 
