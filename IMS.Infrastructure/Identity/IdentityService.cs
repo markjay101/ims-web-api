@@ -15,7 +15,7 @@ namespace IMS.Infrastructure.Identity
 {
     public class IdentityService(UserManager<User> userManager, IOptions<JwtOptions> jwtOptions, IMapper mapper) : IIdentityService
     {
-        private readonly JwtOptions _jwtOptions = jwtOptions.Value;
+        private readonly JwtOptions _jwtSettings = jwtOptions.Value;
         public async Task<UserTokenDto?> AuthenticateAsync(string username, string password)
         {
             var user = await userManager.FindByNameAsync(username);
@@ -35,7 +35,7 @@ namespace IMS.Infrastructure.Identity
 
         private string? GenerateJwtToken(User user)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Secret));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
@@ -47,11 +47,11 @@ namespace IMS.Infrastructure.Identity
                 new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 
-            var expires = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpiryMinutes);
+            var expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes);
 
             var token = new JwtSecurityToken(
-                issuer: _jwtOptions.Issuer,
-                audience: _jwtOptions.Audience,
+                issuer: _jwtSettings.Issuer,
+                audience: _jwtSettings.Audience,
                 claims: claims,
                 expires: expires,
                 signingCredentials: credentials);
