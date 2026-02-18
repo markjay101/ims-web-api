@@ -60,6 +60,8 @@ namespace IMS.Infrastructure
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddAuthorization();
 
+            services.AddTransient<IEmailTemplateService, EmailTemplateService>();
+
             services.AddTransient<GmailService>();
             services.AddSingleton<EmailServiceFactory>();
             services.AddTransient<IEmailService>(sp =>
