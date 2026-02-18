@@ -24,19 +24,24 @@ namespace IMS.Application.Features.Customers.Commands.AssignCustomerModem
 
             if(customer != null)
             {
-                customer.Status = CustomerStatus.Active;
-                customer.ModemId = Guid.Parse(request.ModemId);
 
-                if(customer.Plan != null)
+                if(customer.ModemId == null)
                 {
-                    var dateNow = DateTime.UtcNow;
-                    customer.Plan.StartDate = dateNow;
-                    customer.Plan.NextDueDate = dateNow.AddMonths(1);
+                    customer.Status = CustomerStatus.Active;
+
+                    if (customer.Plan != null)
+                    {
+                        var dateNow = DateTime.UtcNow;
+                        customer.Plan.StartDate = dateNow;
+                        customer.Plan.NextDueDate = dateNow.AddMonths(1);
+                    }
+
+                    customer.AddDomainEvent(new AssignedCustomerModemEvent(customer));
                 }
 
-                customer.AddDomainEvent(new AssignedCustomerModemEvent(customer));
+                customer.ModemId = Guid.Parse(request.ModemId);
 
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync(cancellationToken);
 
                 return mapper.Map<CustomerDto>(customer);
             }

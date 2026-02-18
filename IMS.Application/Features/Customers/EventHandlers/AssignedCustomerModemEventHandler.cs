@@ -4,26 +4,22 @@ using MediatR;
 
 namespace IMS.Application.Features.Customers.EventHandlers
 {
-    public class AssignedCustomerModemEventHandler(IEmailService emailService) : INotificationHandler<AssignedCustomerModemEvent>
+    public class AssignedCustomerModemEventHandler(IEmailService emailService, IEmailTemplateService emailTemplateService) : INotificationHandler<AssignedCustomerModemEvent>
     {
         public async Task Handle(AssignedCustomerModemEvent notification, CancellationToken cancellationToken)
         { 
 
             var customer = notification.Customer;
 
-            var body = $@"
-                <h3>Hello {customer.Application.FirstName},</h3>
-                <p>Great news! Your modem installation is complete, and your internet subscription is now <strong>active</strong>.</p>
-                <p>You can start using your connection immediately. Welcome to the IMS network!</p>
-                <hr />
-                <p><strong>Account Details:</strong></p>
-                <ul>
-                    <li><strong>Status:</strong> Active</li>
-                    <li><strong>Activation Date:</strong> {customer.Plan.StartDate:MMMM dd, yyyy}</li>
-                    <li><strong>Next Billing Date:</strong> {customer.Plan.NextDueDate:MMMM dd, yyyy}</li>
-                </ul>
-                <p>If you have any issues with your connection, please contact our support team.</p>
-                <p>Best regards,<br />IMS Team</p>";
+            var rawTemplate = await emailTemplateService.GetRawTemplateAsync("AssignedCustomerModem", cancellationToken);
+            var placeHolders = new Dictionary<string, string>
+            {
+                { "FirstName", customer.Application.FirstName },
+                { "StartDate", customer.Plan.StartDate!.Value.ToString("MMMM dd, yyyy") },
+                { "NextDueDate", customer.Plan.NextDueDate!.Value.ToString("MMMM dd, yyyy") }
+            };
+
+            var body = emailTemplateService.ReplacePlaceholders(rawTemplate, placeHolders);
 
             await emailService.SendEmailAsync(
                 to: customer.Email,
