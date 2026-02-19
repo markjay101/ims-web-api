@@ -2,9 +2,9 @@
 
 namespace IMS.Application.Features.Customers.Queries
 {
-    public class CustomersListWithStatusCounts : PaginatedList<CustomerDto>
+    public class CustomerListWithStatusCounts : PaginatedList<CustomerDto>
     {
-        public CustomersListWithStatusCounts(PaginatedList<CustomerDto> pList, int pageSize)
+        public CustomerListWithStatusCounts(PaginatedList<CustomerDto> pList, int pageSize)
         : base(pList.Items, pList.TotalCount, pList.PageNumber, pageSize) { }
 
         public int PendingTotalCount { get; set; }

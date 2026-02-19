@@ -13,10 +13,10 @@ namespace IMS.Application.Features.Customers.Queries
 {
     [Authorize(Role = UserRoles.SuperAdmin)]
     [Authorize(Role = UserRoles.Admin)]
-    public record GetCustomersQuery(int PageNumber = 1, int PageSize = 25, string? SearchTerm = null, CustomerStatus? Status = null) : IRequest<CustomersListWithStatusCounts>;
-    public class GetCustomersQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetCustomersQuery, CustomersListWithStatusCounts>
+    public record GetCustomersQuery(int PageNumber = 1, int PageSize = 25, string? SearchTerm = null, CustomerStatus? Status = null) : IRequest<CustomerListWithStatusCounts>;
+    public class GetCustomersQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetCustomersQuery, CustomerListWithStatusCounts>
     {
-        public async Task<CustomersListWithStatusCounts> Handle(GetCustomersQuery request, CancellationToken cancellationToken)
+        public async Task<CustomerListWithStatusCounts> Handle(GetCustomersQuery request, CancellationToken cancellationToken)
         {
             var query = context.Customers.AsQueryable();
 
@@ -41,7 +41,7 @@ namespace IMS.Application.Features.Customers.Queries
             var paginatedListResult =  await query.ProjectTo<CustomerDto>(mapper.ConfigurationProvider)
                 .PaginatedListAsync(request.PageNumber, request.PageSize);
 
-            return new CustomersListWithStatusCounts(paginatedListResult, request.PageSize)
+            return new CustomerListWithStatusCounts(paginatedListResult, request.PageSize)
             {
                 PendingTotalCount = pendingTotalCount,
                 ActiveTotalCount = activeTotalCount,
