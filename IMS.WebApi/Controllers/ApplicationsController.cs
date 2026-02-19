@@ -44,18 +44,18 @@ namespace IMS.WebApi.Controllers
 
         [HttpGet]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(ApiResponse<PaginatedList<ApplicationDto>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<PaginatedList<ApplicationDto>>), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ApiResponse<ApplicationListWithStatusCounts>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetApplications([FromQuery] GetApplicationsQuery query)
         {
             var result = await Mediator.Send(query);
 
-            if (result.Items.Count > 0)
-                return Ok(ApiResponse<PaginatedList<ApplicationDto>>.Success(result));
+            var response = ApiResponse<ApplicationListWithStatusCounts>.Success(result);
+            if (result.Items.Count == 0)
+                response.Message = "No application found.";
 
-            return StatusCode(StatusCodes.Status204NoContent, ApiResponse<PaginatedList<ApplicationDto>>.Success(result, "No applications found."));
+            return Ok(response);
         }
 
         [HttpGet("{id}")]

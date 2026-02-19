@@ -6,17 +6,26 @@ using IMS.Application.Common.Models;
 using IMS.Application.Common.Security;
 using IMS.Domain.Common.Enums;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace IMS.Application.Features.Applications.Queries
 {
     [Authorize(Role = UserRoles.SuperAdmin)]
     [Authorize(Role = UserRoles.Admin)]
-    public record GetApplicationsQuery(int PageNumber = 1, int PageSize = 25, string? SearchTerm = null, ApplicationStatus? Status = null) : IRequest<PaginatedList<ApplicationDto>>;
-    public class GetApplicationsQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetApplicationsQuery, PaginatedList<ApplicationDto>>
+    public record GetApplicationsQuery(int PageNumber = 1, int PageSize = 25, string? SearchTerm = null, ApplicationStatus? Status = null) : IRequest<ApplicationListWithStatusCounts>;
+    public class GetApplicationsQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetApplicationsQuery, ApplicationListWithStatusCounts>
     {
-        public async Task<PaginatedList<ApplicationDto>> Handle(GetApplicationsQuery request, CancellationToken cancellationToken)
+        public async Task<ApplicationListWithStatusCounts> Handle(GetApplicationsQuery request, CancellationToken cancellationToken)
         {
             var query = context.Applications.AsQueryable();
+
+            var statusCounts = await query.GroupBy(c => c.Status)
+                                        .Select(g => new { Status = g.Key, Count = g.Count() })
+                                        .ToDictionaryAsync(x => x.Status, x => x.Count, cancellationToken);
+
+            var pendingTotalCount = statusCounts.GetValueOrDefault(ApplicationStatus.Pending, 0);
+            var approvedTotalCount = statusCounts.GetValueOrDefault(ApplicationStatus.Approved, 0);
+            var rejectedTotalCount = statusCounts.GetValueOrDefault(ApplicationStatus.Rejected, 0);
 
             if (!string.IsNullOrEmpty(request.SearchTerm))
             {
@@ -28,8 +37,15 @@ namespace IMS.Application.Features.Applications.Queries
             if (request.Status.HasValue)
                 query = query.Where(a => a.Status == request.Status.Value);
 
-            return await query.ProjectTo<ApplicationDto>(mapper.ConfigurationProvider)
-                                .PaginatedListAsync(request.PageNumber, request.PageSize);
+            var paginatedResult = await query.ProjectTo<ApplicationDto>(mapper.ConfigurationProvider)
+                                            .PaginatedListAsync(request.PageNumber, request.PageSize);
+
+            return new ApplicationListWithStatusCounts(paginatedResult, request.PageSize)
+            {
+                PendingTotalCount = pendingTotalCount,
+                ApprovedTotalCount = approvedTotalCount,
+                RejectedTotalCount = rejectedTotalCount,
+            };
         }
     }
 }
