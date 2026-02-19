@@ -39,10 +39,12 @@ namespace IMS.WebApi.Controllers
         {
             var result = await Mediator.Send(query);
 
-            if (result.Items.Count > 0)
-                return Ok(ApiResponse<PaginatedList<CustomerDto>>.Success(result));
+            var response = ApiResponse<CustomersListWithStatusCounts>.Success(result);
 
-            return StatusCode(204, ApiResponse<PaginatedList<CustomerDto>>.Success(result, "No Customers found."));
+            if (result.Items.Count == 0)
+                response.Message = "No customer found.";
+
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
