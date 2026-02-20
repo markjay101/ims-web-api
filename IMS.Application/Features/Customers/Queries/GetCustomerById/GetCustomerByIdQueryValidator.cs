@@ -1,18 +1,12 @@
-﻿using FluentValidation;
+﻿using IMS.Application.Common.Validators;
 
 namespace IMS.Application.Features.Customers.Queries.GetCustomerById
 {
-    internal class GetCustomerByIdQueryValidator : AbstractValidator<GetCustomerByIdQuery>
+    internal class GetCustomerByIdQueryValidator : BaseValidator<GetCustomerByIdQuery>
     {
         public GetCustomerByIdQueryValidator()
         {
-            RuleFor(x => x.Id)
-                .Must(ShouldBeValidId).WithMessage("Id is not a valid customer Id.");
-        }
-
-        private bool ShouldBeValidId(string id)
-        {
-            return Guid.TryParse(id, out _);
+            RuleForId(x => x.Id);
         }
     }
 }

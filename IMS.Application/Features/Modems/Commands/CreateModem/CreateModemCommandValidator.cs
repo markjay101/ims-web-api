@@ -1,19 +1,16 @@
-﻿using FluentValidation;
+﻿using IMS.Application.Common.Validators;
 
 namespace IMS.Application.Features.Modems.Commands.CreateModem
 {
-    internal class CreateModemCommandValidator : AbstractValidator<CreateModemCommand>
+    internal class CreateModemCommandValidator : BaseValidator<CreateModemCommand>
     {
         public CreateModemCommandValidator()
         {
-            RuleFor(x => x.Model)
-                .NotEmpty().WithMessage("The Model field is required.");
+            RuleForRequiredString(x => x.Model, "Model");
 
-            RuleFor(x => x.SerialNumber)
-                .NotEmpty().WithMessage("The SerialNumber field is required.");
+            RuleForRequiredString(x => x.SerialNumber, "SerialNumber");
 
-            RuleFor(x => x.MacAddress)
-                .NotEmpty().WithMessage("The MacAddress field is required.");
+            RuleForRequiredString(x => x.MacAddress, "MacAddress");
         }
     }
 }

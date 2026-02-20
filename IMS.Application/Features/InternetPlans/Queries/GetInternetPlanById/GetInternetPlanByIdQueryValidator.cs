@@ -1,18 +1,12 @@
-﻿using FluentValidation;
+﻿using IMS.Application.Common.Validators;
 
 namespace IMS.Application.Features.InternetPlans.Queries.GetInternetPlanById
 {
-    internal class GetInternetPlanByIdQueryValidator : AbstractValidator<GetInternetPlanByIdQuery>
+    internal class GetInternetPlanByIdQueryValidator : BaseValidator<GetInternetPlanByIdQuery>
     {
         public GetInternetPlanByIdQueryValidator()
         {
-            RuleFor(x => x.Id)
-                .Must(ShouldBeValidId).WithMessage("Id is not a valid internet plan Id.");
-        }
-
-        private bool ShouldBeValidId(string id)
-        {
-            return Guid.TryParse(id, out _);
+            RuleForId(x => x.Id);
         }
     }
 }

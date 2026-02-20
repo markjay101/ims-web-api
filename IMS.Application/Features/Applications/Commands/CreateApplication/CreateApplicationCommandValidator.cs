@@ -1,10 +1,11 @@
 ﻿using FluentValidation;
 using IMS.Application.Common.Interfaces;
+using IMS.Application.Common.Validators;
 using Microsoft.EntityFrameworkCore;
 
 namespace IMS.Application.Features.Applications.Commands.CreateApplication
 {
-    public class CreateApplicationCommandValidator : AbstractValidator<CreateApplicationCommand>
+    public class CreateApplicationCommandValidator : BaseValidator<CreateApplicationCommand>
     {
         private readonly IApplicationDbContext _context;
 
@@ -12,36 +13,26 @@ namespace IMS.Application.Features.Applications.Commands.CreateApplication
         {
             _context = context;
 
-            RuleFor(v => v.FirstName)
-                .NotEmpty().WithMessage("The FirstName field is required.");
+            RuleForRequiredString(v => v.FirstName, "FirstName");
 
-            RuleFor(v => v.LastName)
-                .NotEmpty().WithMessage("The LastName field is required.");
+            RuleForRequiredString(v => v.LastName, "LastName");
 
-            RuleFor(v => v.Email)
-                .NotEmpty().WithMessage("The Email field is required.")
-                .EmailAddress().WithMessage("Email should be a valid Email Address.")
-                .MustAsync(EmailShouldBeUnique).WithMessage("The Email is already use.");
+            RuleForRequiredEmail(v => v.Email)
+                .MustAsync(EmailShouldBeUnique).WithMessage("Email Address is already used.");
 
             RuleFor(v => v.ContactNumber)
-               .NotEmpty().WithMessage("The ContactNumber field is required.")
-               .Matches(@"^\d+$").WithMessage("The ContactNumber must only contain numbers.");
+               .NotEmpty().WithMessage("ContactNumber is required.")
+               .Matches(@"^\d+$").WithMessage("ContactNumber must only contain numbers.");
 
-            RuleFor(v => v.Address)
-                .NotEmpty().WithMessage("The Address field is required.");
+            RuleForRequiredString(v => v.Address, "Address");
 
-            RuleFor(v => v.City)
-                .NotEmpty().WithMessage("The City field is required.");
+            RuleForRequiredString(v => v.City, "City");
 
-            RuleFor(v => v.Country)
-                .NotEmpty().WithMessage("The Country field is required.");
+            RuleForRequiredString(v => v.Country, "Country");
 
-            RuleFor(v => v.PostalCode)
-                .NotEmpty().WithMessage("The PostalCode field is required.");
+            RuleForRequiredString(v => v.PostalCode, "PostalCode");
 
-            RuleFor(v => v.InternetPlanId)
-                .NotEmpty().WithMessage("The InternetPlanId field is required.")
-                .Must(ValidGuid).WithMessage("The format of the ID is invalid.")
+            RuleForId(v => v.InternetPlanId, "InternetPlanId")
                 .MustAsync(InternetPlanShouldExist).WithMessage("The Internet Plan does not exist.");
         }
 
@@ -58,14 +49,9 @@ namespace IMS.Application.Features.Applications.Commands.CreateApplication
             return true;
         }
 
-        private bool ValidGuid(string guid)
+        private async Task<bool> InternetPlanShouldExist(Guid id, CancellationToken token)
         {
-            return Guid.TryParse(guid, out _);
-        }
-
-        private async Task<bool> InternetPlanShouldExist(string guid, CancellationToken token)
-        {
-            return await _context.InternetPlans.AnyAsync(ip => ip.Id == Guid.Parse(guid), token);
+            return await _context.InternetPlans.AnyAsync(ip => ip.Id == id, token);
         }
     }
 }

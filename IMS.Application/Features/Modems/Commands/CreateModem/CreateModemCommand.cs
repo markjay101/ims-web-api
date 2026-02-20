@@ -21,9 +21,9 @@ namespace IMS.Application.Features.Modems.Commands.CreateModem
 
             await context.Modems.AddAsync(newModem, cancellationToken);
 
-            var result = await context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
 
-            return result > 0 ? newModem.Id : Guid.Empty;
+            return newModem.Id;
         }
     }
 }

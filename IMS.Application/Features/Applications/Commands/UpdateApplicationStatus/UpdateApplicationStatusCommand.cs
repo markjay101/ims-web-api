@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using IMS.Application.Common.Interfaces;
 using IMS.Application.Common.Security;
+using IMS.Application.Features.Applications.Queries;
 using IMS.Domain.Common.Enums;
 using IMS.Domain.Entities;
 using MediatR;
@@ -9,16 +10,19 @@ namespace IMS.Application.Features.Applications.Commands.UpdateApplicationStatus
 {
     [Authorize(Role = UserRoles.SuperAdmin)]
     [Authorize(Role = UserRoles.Admin)]
-    public record UpdateApplicationStatusCommand(Guid ApplicationId, ApplicationStatus Status) : IRequest<bool>;
-    public class UpdateApplicationStatusCommandHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<UpdateApplicationStatusCommand, bool>
+    public record UpdateApplicationStatusCommand(Guid ApplicationId, ApplicationStatus Status) : IRequest<ApplicationDto>;
+    public class UpdateApplicationStatusCommandHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<UpdateApplicationStatusCommand, ApplicationDto>
     {
-        public async Task<bool> Handle(UpdateApplicationStatusCommand request, CancellationToken cancellationToken)
+        public async Task<ApplicationDto> Handle(UpdateApplicationStatusCommand request, CancellationToken cancellationToken)
         {
             var application = await context.Applications.FindAsync(request.ApplicationId, cancellationToken);
-            
-            application?.Status = request.Status;
 
-            if(application is not null && request.Status == ApplicationStatus.Approved)
+            if (application!.Status == request.Status)
+                return mapper.Map<ApplicationDto>(application);
+
+            application!.Status = request.Status;
+
+            if(request.Status == ApplicationStatus.Approved)
             {
                 var newCustomer = mapper.Map<Customer>(application);
 
@@ -33,9 +37,9 @@ namespace IMS.Application.Features.Applications.Commands.UpdateApplicationStatus
                 await context.CustomerPlans.AddAsync(customerPlan, cancellationToken);
             }
 
-            var result = await context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
 
-            return result > 0;
+            return mapper.Map<ApplicationDto>(application);
         }
     }
 }

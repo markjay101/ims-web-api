@@ -1,10 +1,11 @@
 ﻿using FluentValidation;
 using IMS.Application.Common.Interfaces;
+using IMS.Application.Common.Validators;
 using Microsoft.EntityFrameworkCore;
 
 namespace IMS.Application.Features.Payments.Commands.CreatePayment
 {
-    internal class CreatePaymentCommandValidator : AbstractValidator<CreatePaymentCommand>
+    internal class CreatePaymentCommandValidator : BaseValidator<CreatePaymentCommand>
     {
         private readonly IApplicationDbContext _context;
 
@@ -12,20 +13,15 @@ namespace IMS.Application.Features.Payments.Commands.CreatePayment
         {
             _context = context;
 
-            RuleFor(x => x.InvoiceId)
-                .NotEmpty().WithMessage("InvoiceId is required.")
-                .Must(ValidGuid).WithMessage("InvoiceId is invalid.")
-                .MustAsync(InvoiceShouldExist).WithMessage("Invoice with the specified ID does not exist.");
+            RuleForId(x => x.InvoiceId, "InvoiceId")
+                .MustAsync(InvoiceShouldExist).WithMessage("Invoice does not exist.");
+
+            RuleForEnum(x => x.PaymentMethod, "PaymentMethod");
         }
 
-        private async Task<bool> InvoiceShouldExist(string invoiceId, CancellationToken token)
+        private async Task<bool> InvoiceShouldExist(Guid id, CancellationToken token)
         {
-            return await _context.Invoices.AnyAsync(i => i.Id == Guid.Parse(invoiceId), token);
-        }
-
-        private bool ValidGuid(string invoiceId)
-        {
-            return Guid.TryParse(invoiceId, out _);
+            return await _context.Invoices.AnyAsync(i => i.Id == id, token);
         }
     }
 }

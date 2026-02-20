@@ -21,9 +21,9 @@ namespace IMS.Application.Features.PaymentMethods.Commands.CreatePaymentMethod
 
             await context.PaymentMethods.AddAsync(newPaymentMethod, cancellationToken);
 
-            var result = await context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
 
-            return result > 0 ? newPaymentMethod.Id : Guid.Empty;
+            return newPaymentMethod.Id;
         }
     }
 }

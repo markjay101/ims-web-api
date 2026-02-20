@@ -1,5 +1,7 @@
-﻿using IMS.Application.Common.Interfaces;
+﻿using AutoMapper;
+using IMS.Application.Common.Interfaces;
 using IMS.Application.Common.Security;
+using IMS.Application.Features.Customers.Queries;
 using IMS.Domain.Common.Enums;
 using IMS.Domain.Entities;
 using MediatR;
@@ -9,17 +11,18 @@ namespace IMS.Application.Features.Customers.Commands.UpdateCustomerStatus
 {
     [Authorize(Role = UserRoles.SuperAdmin)]
     [Authorize(Role = UserRoles.Admin)]
-    public record UpdateCustomerStatusCommand(Guid Id, CustomerStatus Status) : IRequest<bool>;
-    public class UpdateCustomerStatusCommandHandler(IApplicationDbContext context) : IRequestHandler<UpdateCustomerStatusCommand, bool>
+    public record UpdateCustomerStatusCommand(Guid Id, CustomerStatus Status) : IRequest<CustomerDto?>;
+    public class UpdateCustomerStatusCommandHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<UpdateCustomerStatusCommand, CustomerDto?>
     {
-        public async Task<bool> Handle(UpdateCustomerStatusCommand request, CancellationToken cancellationToken)
+        public async Task<CustomerDto?> Handle(UpdateCustomerStatusCommand request, CancellationToken cancellationToken)
         {
             var customer = await context.Customers
                                         .Include(c => c.Plan)
                                         .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
 
-            if (customer is not null 
-                && customer.Plan is null
+            if (customer == null) return null;
+
+            if (customer.Plan is null
                 && customer.Status == CustomerStatus.Pending 
                 && request.Status == CustomerStatus.Active)
             {
@@ -38,11 +41,11 @@ namespace IMS.Application.Features.Customers.Commands.UpdateCustomerStatus
                 await context.CustomerPlans.AddAsync(customerPlan, cancellationToken);
             }
 
-            customer?.Status = request.Status;
+            customer.Status = request.Status;
 
-            var result = await context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
 
-            return result != 0;
+            return mapper.Map<CustomerDto>(customer);
         }
     }
 }

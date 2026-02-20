@@ -1,22 +1,23 @@
 ﻿using FluentValidation;
+using IMS.Application.Common.Validators;
 
 namespace IMS.Application.Features.InternetPlans.Commands.CreateInternetPlan
 {
-    internal class CreateInternetPlanCommandValidator : AbstractValidator<CreateInternetPlanCommand>
+    internal class CreateInternetPlanCommandValidator : BaseValidator<CreateInternetPlanCommand>
     {
         public CreateInternetPlanCommandValidator()
         {
-            RuleFor(x => x.Name)
-                .NotEmpty().WithMessage("The Name field is required.");
+            RuleForRequiredString(x => x.Name, "Name");
 
-            RuleFor(x => x.Description)
-                .NotEmpty().WithMessage("The Description field is required.");
+            RuleForRequiredString(x => x.Description, "Description");
 
             RuleFor(x => x.SpeedMbps)
-                .NotEmpty().WithMessage("The SpeedMbps field is required.");
+                .NotEmpty().WithMessage("SpeedMbps is required.")
+                .GreaterThan(0).WithMessage("Speed must be at least 1 Mbps.");
 
             RuleFor(x => x.Price)
-               .NotEmpty().WithMessage("The Price field is required.");
+               .GreaterThanOrEqualTo(0).WithMessage("Price cannot be negative.")
+               .PrecisionScale(18, 2, true).WithMessage("Price must have a maximum of 2 decimal places.");
         }
     }
 }

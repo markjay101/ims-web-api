@@ -7,14 +7,14 @@ using MediatR;
 namespace IMS.Application.Features.Payments.Commands.CreatePayment
 {
     [Authorize(Role = UserRoles.Customer)]
-    public record CreatePaymentCommand(string InvoiceId, PaymentMethodEnum PaymentMethod, string ReferenceNumber, decimal Amount) : IRequest<Guid>;
+    public record CreatePaymentCommand(Guid InvoiceId, PaymentMethodEnum PaymentMethod, string ReferenceNumber, decimal Amount) : IRequest<Guid>;
     public class CreatePaymentCommandHandler(IApplicationDbContext context) : IRequestHandler<CreatePaymentCommand, Guid>
     {
         public async Task<Guid> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
         {
             var newPayment = new Payment
             {
-                InvoiceId = Guid.Parse(request.InvoiceId),
+                InvoiceId = request.InvoiceId,
                 Method = request.PaymentMethod,
                 ReferenceNumber = request.ReferenceNumber,
                 PaymentDate = DateTime.UtcNow,
@@ -23,9 +23,9 @@ namespace IMS.Application.Features.Payments.Commands.CreatePayment
 
             await context.Payments.AddAsync(newPayment, cancellationToken);
 
-            var result = await context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
 
-            return result > 0 ? newPayment.Id : Guid.Empty;
+            return newPayment.Id;
         }
     }
 }

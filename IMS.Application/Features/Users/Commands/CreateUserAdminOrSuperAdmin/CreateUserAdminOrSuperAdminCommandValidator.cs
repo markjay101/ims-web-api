@@ -1,11 +1,12 @@
 ﻿using FluentValidation;
 using IMS.Application.Common.Interfaces;
+using IMS.Application.Common.Validators;
 using IMS.Domain.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace IMS.Application.Features.Users.Commands.CreateUserAdminOrSuperAdmin
 {
-    public class CreateUserAdminOrSuperAdminCommandValidator : AbstractValidator<CreateUserAdminOrSuperAdminCommand>
+    public class CreateUserAdminOrSuperAdminCommandValidator : BaseValidator<CreateUserAdminOrSuperAdminCommand>
     {
         private readonly IApplicationDbContext _context;
 
@@ -13,28 +14,24 @@ namespace IMS.Application.Features.Users.Commands.CreateUserAdminOrSuperAdmin
         {
             _context = context;
 
-            RuleFor(v => v.UserName)
-                .NotEmpty().WithMessage("The UserName field is required.")
-                .EmailAddress().WithMessage("UserName should be a valid Email Address.")
-                .MustAsync(BeUniqueUserName).WithMessage("This Email Address is already registered.");
+            RuleForRequiredEmail(v => v.UserName, "UserName")
+                .MustAsync(ShouldBeUniquuUserName).WithMessage("UserName is already used.");
 
-            RuleFor(v => v.FirstName)
-               .NotEmpty().WithMessage("The FirstName field is required.");
+            RuleForRequiredString(v => v.FirstName, "FirstName");
 
-            RuleFor(v => v.LastName)
-               .NotEmpty().WithMessage("The LastName field is required.");
+            RuleForRequiredString(v => v.LastName, "LastName");
 
             RuleFor(v => v.Role)
-                .Must(BeSuperAdminOrAdminRole)
+                .Must(ShouldBeSuperAdminOrAdminRole)
                 .WithMessage("You can only create users with SuperAdmin or Admin roles.");
         }
 
-        private async Task<bool> BeUniqueUserName(string userName, CancellationToken cancellationToken)
+        private async Task<bool> ShouldBeUniquuUserName(string userName, CancellationToken cancellationToken)
         {
             return !await _context.Users.AnyAsync(t => t.UserName == userName, cancellationToken);
         }
 
-        private bool BeSuperAdminOrAdminRole(Role role)
+        private bool ShouldBeSuperAdminOrAdminRole(Role role)
         {
             return role == Role.SuperAdmin || role == Role.Admin;
         }

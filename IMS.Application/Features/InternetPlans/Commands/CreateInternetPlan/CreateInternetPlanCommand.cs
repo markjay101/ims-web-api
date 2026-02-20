@@ -21,9 +21,10 @@ namespace IMS.Application.Features.InternetPlans.Commands.CreateInternetPlan
             };
 
             await context.InternetPlans.AddAsync(newInternetPlan, cancellationToken);
-            var result = await context.SaveChangesAsync(cancellationToken);
 
-            return result > 0 ? newInternetPlan.Id : Guid.Empty;    
+            await context.SaveChangesAsync(cancellationToken);
+
+            return newInternetPlan.Id;    
         }
     }
 }

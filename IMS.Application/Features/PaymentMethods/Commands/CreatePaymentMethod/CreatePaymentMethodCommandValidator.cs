@@ -1,12 +1,12 @@
 ﻿using FluentValidation;
 using IMS.Application.Common.Interfaces;
+using IMS.Application.Common.Validators;
 using IMS.Domain.Common.Enums;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 namespace IMS.Application.Features.PaymentMethods.Commands.CreatePaymentMethod
 {
-    internal class CreatePaymentMethodCommandValidator : AbstractValidator<CreatePaymentMethodCommand>
+    internal class CreatePaymentMethodCommandValidator : BaseValidator<CreatePaymentMethodCommand>
     {
         private readonly IApplicationDbContext _context;
 
@@ -14,14 +14,12 @@ namespace IMS.Application.Features.PaymentMethods.Commands.CreatePaymentMethod
         {
             _context = context;
             
-            RuleFor(x => x.MethodName)
+            RuleForEnum(x => x.MethodName, "PaymentMethod")
                 .MustAsync(ShouldNotExist).WithMessage(m => $"Payment method {m.MethodName} already exist.");
 
-            RuleFor(x => x.AccountName)
-                .NotEmpty().WithMessage("The AccountName field is required.");
+            RuleForRequiredString(x => x.AccountName, "AccountName");
 
-            RuleFor(x => x.AccountNumber)
-                .NotEmpty().WithMessage("The AccountNumber field is required.");
+            RuleForRequiredString(x => x.AccountNumber, "AccountNumber");
         }
 
         private async Task<bool> ShouldNotExist(PaymentMethodEnum @enum, CancellationToken token)

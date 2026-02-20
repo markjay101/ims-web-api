@@ -13,7 +13,7 @@ namespace IMS.Application.Features.Applications.Commands.CreateApplication
         string City,
         string Country,
         string PostalCode,
-        string InternetPlanId
+        Guid InternetPlanId
         ) : IRequest<Guid>;
     public class CreateApplicationCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateApplicationCommand, Guid>
     {
@@ -29,15 +29,15 @@ namespace IMS.Application.Features.Applications.Commands.CreateApplication
                 City = request.City,
                 Country = request.Country,
                 PostalCode = request.PostalCode,
-                InternetPlanId = Guid.Parse(request.InternetPlanId),
+                InternetPlanId = request.InternetPlanId,
                 Status = ApplicationStatus.Pending
             };
 
             await context.Applications.AddAsync(application, cancellationToken);
 
-            var result = await context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
 
-            return result > 0 ? application.Id : Guid.Empty;
+            return application.Id;
         }
     }
 }

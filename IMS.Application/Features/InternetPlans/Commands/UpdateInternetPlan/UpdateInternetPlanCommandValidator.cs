@@ -1,34 +1,25 @@
 ﻿using FluentValidation;
-using IMS.Application.Common.Interfaces;
-using Microsoft.EntityFrameworkCore;
+using IMS.Application.Common.Validators;
 
 namespace IMS.Application.Features.InternetPlans.Commands.UpdateInternetPlan
 {
-    internal class UpdateInternetPlanCommandValidator : AbstractValidator<UpdateInternetPlanCommand>
+    internal class UpdateInternetPlanCommandValidator : BaseValidator<UpdateInternetPlanCommand>
     {
-        private readonly IApplicationDbContext _context;
-
-        public UpdateInternetPlanCommandValidator(IApplicationDbContext context)
+        public UpdateInternetPlanCommandValidator()
         {
-            _context = context;
+            RuleForId(x => x.Id);
 
-            RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("The Id field is required.")
-                .MustAsync(InternetPlanShouldExist).WithMessage("Internet plan does not exist.");
+            RuleForRequiredString(x => x.Name, "Name");
 
-            RuleFor(x => x.Name)
-                .NotEmpty().WithMessage("The Name field is required.");
-
-            RuleFor(x => x.Description)
-                .NotEmpty().WithMessage("The Description field is required.");
+            RuleForRequiredString(x => x.Description, "Description");
 
             RuleFor(x => x.SpeedMbps)
-                .NotEmpty().WithMessage("The SpeedMbps field is required.");
-        }
+                .NotEmpty().WithMessage("SpeedMbps is required.")
+                .GreaterThan(0).WithMessage("Speed must be at least 1 Mbps.");
 
-        private async Task<bool> InternetPlanShouldExist(Guid id, CancellationToken token)
-        {
-            return await _context.InternetPlans.AnyAsync(ip => ip.Id == id, token);
+            RuleFor(x => x.Price)
+               .GreaterThanOrEqualTo(0).WithMessage("Price cannot be negative.")
+               .PrecisionScale(18, 2, true).WithMessage("Price must have a maximum of 2 decimal places.");
         }
     }
 }

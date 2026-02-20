@@ -1,21 +1,27 @@
 ﻿using FluentValidation;
+using IMS.Application.Common.Interfaces;
+using IMS.Application.Common.Validators;
+using Microsoft.EntityFrameworkCore;
 
 namespace IMS.Application.Features.Customers.Commands.AssignCustomerModem
 {
-    internal class AssignCustomerModemCommandValidator : AbstractValidator<AssignCustomerModemCommand>
+    internal class AssignCustomerModemCommandValidator : BaseValidator<AssignCustomerModemCommand>
     {
-        public AssignCustomerModemCommandValidator()
-        {
-            RuleFor(v => v.CustomerId)
-                .Must(ShouldBeValidId).WithMessage("CustomerId is not valid Id.");
+        private readonly IApplicationDbContext _context;
 
-            RuleFor(v => v.ModemId)
-                .Must(ShouldBeValidId).WithMessage("CustomerId is not valid Id.");
+        public AssignCustomerModemCommandValidator(IApplicationDbContext context)
+        {
+            _context = context;
+
+            RuleForId(v => v.CustomerId, "CustomerId");
+
+            RuleForId(v => v.ModemId, "ModemId")
+                .MustAsync(ModemShouldExist).WithMessage("Modem does not exist.");
         }
 
-        private bool ShouldBeValidId(string id)
+        private async Task<bool> ModemShouldExist(Guid id, CancellationToken token)
         {
-            return Guid.TryParse(id, out _);
+            return await _context.Modems.AnyAsync(m => m.Id == id, token);
         }
     }
 }

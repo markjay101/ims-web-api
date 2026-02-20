@@ -1,18 +1,13 @@
 ﻿using FluentValidation;
+using IMS.Application.Common.Validators;
 
 namespace IMS.Application.Features.Applications.Queries.GetApplicationById
 {
-    internal class GetApplicationByIdQueryValidator : AbstractValidator<GetApplicationByIdQuery>
+    internal class GetApplicationByIdQueryValidator : BaseValidator<GetApplicationByIdQuery>
     {
         public GetApplicationByIdQueryValidator()
         {
-            RuleFor(x => x.Id)
-                .Must(ShouldBeValidId).WithMessage("Id is not a valid application Id.");
-        }
-
-        private bool ShouldBeValidId(string id)
-        {
-            return Guid.TryParse(id, out _);
+            RuleForId(x => x.Id);
         }
     }
 }

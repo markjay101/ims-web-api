@@ -12,42 +12,35 @@ namespace IMS.Application.Features.Customers.Commands.AssignCustomerModem
 {
     [Authorize(Role = UserRoles.SuperAdmin)]
     [Authorize(Role = UserRoles.Admin)]
-    public record AssignCustomerModemCommand(string CustomerId, string ModemId) : IRequest<CustomerDto?>;
+    public record AssignCustomerModemCommand(Guid CustomerId, Guid ModemId) : IRequest<CustomerDto?>;
     public class AssignCustomerModemCommandHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<AssignCustomerModemCommand, CustomerDto?>
     {
         public async Task<CustomerDto?> Handle(AssignCustomerModemCommand request, CancellationToken cancellationToken)
         {
-            var customerGuid = Guid.Parse(request.CustomerId);
             var customer = await context.Customers.Include(c => c.Plan)
                                                 .Include(c => c.Application)
-                                                .FirstOrDefaultAsync(c => c.Id == customerGuid);
+                                                .FirstOrDefaultAsync(c => c.Id == request.CustomerId);
+            if (customer == null) return null;
 
-            if(customer != null)
+            if (customer.ModemId == null)
             {
+                customer.Status = CustomerStatus.Active;
 
-                if(customer.ModemId == null)
+                if (customer.Plan != null)
                 {
-                    customer.Status = CustomerStatus.Active;
-
-                    if (customer.Plan != null)
-                    {
-                        var dateNow = DateTime.UtcNow;
-                        customer.Plan.StartDate = dateNow;
-                        customer.Plan.NextDueDate = dateNow.AddMonths(1);
-                    }
-
-                    customer.AddDomainEvent(new AssignedCustomerModemEvent(customer));
+                    var dateNow = DateTime.UtcNow;
+                    customer.Plan.StartDate = dateNow;
+                    customer.Plan.NextDueDate = dateNow.AddMonths(1);
                 }
 
-                customer.ModemId = Guid.Parse(request.ModemId);
-
-                await context.SaveChangesAsync(cancellationToken);
-
-                return mapper.Map<CustomerDto>(customer);
+                customer.AddDomainEvent(new AssignedCustomerModemEvent(customer));
             }
 
-            return null;
+            customer.ModemId = request.ModemId;
 
+            await context.SaveChangesAsync(cancellationToken);
+
+            return mapper.Map<CustomerDto>(customer);
         }
     }
 }

@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Identity;
 namespace IMS.Application.Features.Users.Commands.CreateUserAdminOrSuperAdmin
 {
     [Authorize(Role = UserRoles.SuperAdmin)]
-    public record CreateUserAdminOrSuperAdminCommand(string UserName, string FirstName, string LastName, Role Role) : IRequest<bool>;
+    public record CreateUserAdminOrSuperAdminCommand(string UserName, string FirstName, string LastName, Role Role) : IRequest<Guid>;
 
-    public class CreateUserAdminOrSuperAdminCommandHandler(UserManager<User> userManager) : IRequestHandler<CreateUserAdminOrSuperAdminCommand, bool>
+    public class CreateUserAdminOrSuperAdminCommandHandler(UserManager<User> userManager) : IRequestHandler<CreateUserAdminOrSuperAdminCommand, Guid>
     {
-        public async Task<bool> Handle(CreateUserAdminOrSuperAdminCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(CreateUserAdminOrSuperAdminCommand request, CancellationToken cancellationToken)
         {
             var newAdmin = new User
             {
@@ -31,9 +31,9 @@ namespace IMS.Application.Features.Users.Commands.CreateUserAdminOrSuperAdmin
             newAdmin.Password = defaultPassword;
             newAdmin.AddDomainEvent(new CreatedUserEvent(newAdmin));
 
-            var result = await userManager.CreateAsync(newAdmin, defaultPassword);
+            await userManager.CreateAsync(newAdmin, defaultPassword);
 
-            return result.Succeeded;
+            return newAdmin.Id;
         }
     }
 }
