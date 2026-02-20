@@ -20,15 +20,16 @@ namespace IMS.WebApi.Controllers
         {
             var result = await Mediator.Send(command);
 
-            if (result != Guid.Empty)
-                return StatusCode(StatusCodes.Status201Created, ApiResponse<Guid>.Success(result, "Application successfully submitted."));
+            if(result == Guid.Empty)
+                return NoContent();
 
-            return BadRequest(ApiResponse<object>.Failure([], "Failed to submit application."));
+            return CreatedAtAction(nameof(GetApplicationById), new { id = result }, ApiResponse<Guid>.Success(result, "Application successfully submitted."));
         }
 
         [HttpPost("update-status")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<ApplicationDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
@@ -36,15 +37,16 @@ namespace IMS.WebApi.Controllers
         {
             var result = await Mediator.Send(command);
 
-            if (result)
-                return Ok(ApiResponse<object>.Success(message: $"Application status successfully update to {command.Status}"));
-
-            return BadRequest(ApiResponse<object>.Failure([], "Failed to update application status"));
+            if(result == null)
+                return NoContent();
+                
+            return Ok(ApiResponse<ApplicationDto>.Success(result, $"Application status successfully updated to {command.Status}"));
         }
 
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ApiResponse<ApplicationListWithStatusCounts>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetApplications([FromQuery] GetApplicationsQuery query)
@@ -52,27 +54,29 @@ namespace IMS.WebApi.Controllers
             var result = await Mediator.Send(query);
 
             var response = ApiResponse<ApplicationListWithStatusCounts>.Success(result);
+
             if (result.Items.Count == 0)
                 response.Message = "No application found.";
 
             return Ok(response);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ApiResponse<ApplicationDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<ApplicationDto>), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetApplications([FromRoute] string id)
+        public async Task<IActionResult> GetApplicationById([FromRoute] Guid id)
         {
-            var query = new GetApplicationByIdQuery(id);
-            var result = await Mediator.Send(query);
+            var result = await Mediator.Send(new GetApplicationByIdQuery(id));
 
-            if (result != null)
-                return Ok(ApiResponse<ApplicationDto>.Success(result));
+            var response = ApiResponse<ApplicationDto>.Success(result);
 
-            return StatusCode(StatusCodes.Status204NoContent, ApiResponse<ApplicationDto>.Success(result, $"Application with id {id} is not found."));
+            if (result == null)
+                response.Message = $"Application with id {id} is not found.";
+
+            return Ok(response);
         }
     }
 }

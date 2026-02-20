@@ -9,6 +9,7 @@ namespace IMS.WebApi.Controllers
         [HttpPost("create")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ApiResponse<Guid>), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
@@ -16,10 +17,9 @@ namespace IMS.WebApi.Controllers
         {
             var result = await Mediator.Send(command);
 
-            if (result != Guid.Empty)
-                return StatusCode(StatusCodes.Status201Created, ApiResponse<Guid>.Success(result, "Payment successfully submitted."));
+            if (result == Guid.Empty) return NoContent();
 
-            return BadRequest(ApiResponse<object>.Failure([], "Failed to submit payment."));
+            return CreatedAtAction(null, ApiResponse<Guid>.Success(result, "Payment successfully submitted."));
         }
     }
 }

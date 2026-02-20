@@ -19,15 +19,15 @@ namespace IMS.WebApi.Controllers
         {
             var result = await Mediator.Send(command);
 
-            if (result != Guid.Empty)
-                return StatusCode(201, ApiResponse<Guid>.Success(result, "Modem successfully created."));
+            if (result == Guid.Empty) return NoContent();
 
-            return BadRequest(ApiResponse<object>.Failure(["Empty Guid"], "Failed to create modem."));
+            return CreatedAtAction(null, ApiResponse<Guid>.Success(result, "Modem successfully created."));
         }
 
         [HttpPost("update")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(ApiResponse<Guid>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<ModemDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
@@ -35,16 +35,14 @@ namespace IMS.WebApi.Controllers
         {
             var result = await Mediator.Send(command);
 
-            if (result)
-                return Ok(ApiResponse<Guid>.Success(message: "Modem successfully updated."));
-
-            return BadRequest(ApiResponse<object>.Failure(["Empty Guid"], "Failed to update modem."));
+            if (result == null) return NoContent();
+                
+            return Ok(ApiResponse<ModemDto>.Success(result, "Modem successfully updated."));
         }
 
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ApiResponse<PaginatedList<ModemDto>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<PaginatedList<ModemDto>>), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
@@ -52,16 +50,17 @@ namespace IMS.WebApi.Controllers
         {
             var result = await Mediator.Send(query);
 
-            if (result.Items.Count > 0)
-                return Ok(ApiResponse<PaginatedList<ModemDto>>.Success(result));
+            var response = ApiResponse<PaginatedList<ModemDto>>.Success(result);
 
-            return StatusCode(StatusCodes.Status204NoContent, ApiResponse<PaginatedList<ModemDto>>.Success(result, "No modems found."));
+            if (result.Items.Count == 0)
+                response.Message = "No modems found.";
+
+            return Ok(response);
         }
 
         [HttpGet("available")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ApiResponse<List<ModemDto>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<List<ModemDto>>), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
@@ -69,10 +68,12 @@ namespace IMS.WebApi.Controllers
         {
             var result = await Mediator.Send(query);
 
-            if (result.Count > 0)
-                return Ok(ApiResponse<List<ModemDto>>.Success(result));
+            var response = ApiResponse<List<ModemDto>>.Success(result);
 
-            return StatusCode(StatusCodes.Status204NoContent, ApiResponse<List<ModemDto>>.Success(result, "No available modems."));
+            if (result.Count == 0)
+                response.Message = "No available modems found.";
+
+            return Ok(response);
         }
     }
 }

@@ -15,6 +15,7 @@ namespace IMS.WebApi.Controllers
         [HttpPost("update-status")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
@@ -22,16 +23,14 @@ namespace IMS.WebApi.Controllers
         {
             var result =  await Mediator.Send(command);
 
-            if (result)
-                return Ok(ApiResponse<object>.Success(message: $"Customer status successfully update to {command.Status}"));
+            if (result == null) return NoContent();
 
-            return BadRequest(ApiResponse<object>.Failure([], "Failed to update customer status"));
+            return Ok(ApiResponse<object>.Success(result, $"Customer status successfully update to {command.Status}"));
         }
 
         [HttpGet]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(ApiResponse<PaginatedList<CustomerDto>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<PaginatedList<CustomerDto>>), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ApiResponse<CustomerListWithStatusCounts>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
@@ -47,48 +46,47 @@ namespace IMS.WebApi.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ApiResponse<CustomerDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<CustomerDto>), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetCustomerById([FromRoute] string id)
+        public async Task<IActionResult> GetCustomerById([FromRoute] Guid id)
         {
-            var query = new GetCustomerByIdQuery(id);
+            var result = await Mediator.Send(new GetCustomerByIdQuery(id));
 
-            var result = await Mediator.Send(query);
+            var response = ApiResponse<CustomerDto>.Success(result);
 
-            if (result != null)
-                return Ok(ApiResponse<CustomerDto>.Success(result));
+            if (result == null)
+                response.Message = $"Customer with id {id} is not found.";
 
-            return StatusCode(204, ApiResponse<CustomerDto>.Success(result, $"Customer with id {id} is not found."));
+            return Ok(response);
         }
 
-        [HttpGet("{customerId}/invoices")]
+        [HttpGet("{customerId:guid}/invoices")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ApiResponse<PaginatedList<InvoiceDto>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<PaginatedList<InvoiceDto>>), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetCustomerInvoices([FromRoute] string customerId, [FromQuery] int pageNumber, [FromQuery] int pageSize)
+        public async Task<IActionResult> GetCustomerInvoices([FromRoute] Guid customerId, [FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
             var query = new GetCustomerInvoicesQuery(customerId, pageNumber, pageSize);
 
             var result = await Mediator.Send(query);
 
-            if (result.Items.Count > 0)
-                return Ok(ApiResponse<PaginatedList<InvoiceDto>>.Success(result));
+            var response = ApiResponse<PaginatedList<InvoiceDto>>.Success(result);
 
-            return StatusCode(204, ApiResponse<PaginatedList<InvoiceDto>>.Success(result, "No Customer's Invoices found."));
+            if (result.Items.Count == 0)
+                response.Message = $"No invoices found for customer with id {customerId}.";
+
+            return Ok(response);
         }
 
         [HttpPost("assign-modem")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ApiResponse<CustomerDto?>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<CustomerDto?>), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
@@ -96,10 +94,12 @@ namespace IMS.WebApi.Controllers
         {
             var result = await Mediator.Send(command);
 
-            if (result is not null)
-                return Ok(ApiResponse<CustomerDto?>.Success(result));
+            var response = ApiResponse<CustomerDto?>.Success(result);
 
-            return StatusCode(204, ApiResponse<CustomerDto?>.Success(result, "Failed to assign modem."));
+            if (result == null)
+                response.Message = $"Customer with id {command.CustomerId} is not found.";
+
+            return Ok(response);;
         }
     }
 }

@@ -9,33 +9,37 @@ namespace IMS.WebApi.Controllers
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetDashboardSummary()
         {
             var result = await Mediator.Send(new GetDashboardSummaryQuery());
 
-            if (result is not null)
-                return Ok(ApiResponse<object>.Success(result));
+            var response = ApiResponse<object>.Success(result);
 
-            return StatusCode(StatusCodes.Status204NoContent, ApiResponse<object>.Success(result, "No dashboard summary to be shown."));
+            if (result == null)
+                response.Message = "No dashboard summary to be shown.";
+
+            return Ok(response);
         }
 
         [HttpGet("monthly-earnings")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ApiResponse<List<MonthlyEarningDto>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetMonthlyEarnings()
         {
             var result = await Mediator.Send(new GetMonthlyEarningsQuery());
 
-            if (result is not null && result.Any())
-                return Ok(ApiResponse<List<MonthlyEarningDto>>.Success([.. result]));
+            var response = ApiResponse<List<MonthlyEarningDto>>.Success([.. result]);
 
-            return StatusCode(StatusCodes.Status204NoContent, ApiResponse<object>.Success(result, "No monthly earnings to be shown."));
+            if (result == null || !result.Any())
+                response.Message = "No monthly earnings to be shown.";
+
+            return Ok(response);
         }
     }
 }

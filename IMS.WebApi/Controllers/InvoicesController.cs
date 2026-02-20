@@ -1,4 +1,5 @@
 ﻿using IMS.Application.Features.Invoices.Commands.UpdateInvoiceStatus;
+using IMS.Application.Features.Invoices.Queries;
 using IMS.WebApi.Common;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,8 @@ namespace IMS.WebApi.Controllers
     {
         [HttpPost("update-status")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<InvoiceDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
@@ -16,10 +18,10 @@ namespace IMS.WebApi.Controllers
         {
             var result = await Mediator.Send(command);
 
-            if (result)
-                return Ok(ApiResponse<object>.Success(message: $"Invoice status successfully update to {command.Status}"));
+            if (result == null)
+                return NoContent();
 
-            return BadRequest(ApiResponse<object>.Failure([], "Failed to update invoice status"));
+            return Ok(ApiResponse<InvoiceDto>.Success(result, $"Invoice status successfully update to {command.Status}"));
         }
     }
 }

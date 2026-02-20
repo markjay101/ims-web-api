@@ -37,15 +37,15 @@ namespace IMS.WebApi.Controllers
         {
             var result = await Mediator.Send(command);
 
-            if(result)
-                return StatusCode(201, ApiResponse<object>.Success(message: $"User {command.Role} successfully created."));
+            if (result == Guid.Empty) return NoContent();
 
-            return BadRequest(ApiResponse<object>.Failure([], "Failed to create user."));
+            return CreatedAtAction(null, ApiResponse<object>.Success(result, $"User {command.Role} successfully created."));
         }
 
         [HttpPost("update-admin")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
@@ -53,16 +53,14 @@ namespace IMS.WebApi.Controllers
         {
             var result = await Mediator.Send(command);
 
-            if (result)
-                return Ok(ApiResponse<object>.Success(message: $"User admin successfully updated."));
+            if (result == null) return NoContent();
 
-            return BadRequest(ApiResponse<object>.Failure([], "Failed to update user admin."));
+            return Ok(ApiResponse<object>.Success(result, $"User admin successfully updated."));
         }
 
         [HttpGet("admins")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ApiResponse<PaginatedList<UserDto>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<PaginatedList<UserDto>>), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
@@ -70,10 +68,12 @@ namespace IMS.WebApi.Controllers
         {
             var result = await Mediator.Send(query);
 
-            if (result.Items.Count != 0)
-                return Ok(ApiResponse<PaginatedList<UserDto>>.Success(result));
+            var response = ApiResponse<PaginatedList<UserDto>>.Success(result);
 
-            return StatusCode(204, ApiResponse<PaginatedList<UserDto>>.Success(result));
+            if (result.Items.Count == 0)
+                response.Message = "No admins found.";
+
+            return Ok(response);
         }
 
         [HttpGet("admin/stats")]
@@ -86,7 +86,12 @@ namespace IMS.WebApi.Controllers
         {
             var result = await Mediator.Send(query);
 
-            return Ok(ApiResponse<AdminStatDto>.Success(result));
+            var response = ApiResponse<AdminStatDto>.Success(result);
+
+             if (result == null)
+                response.Message = "No admin statistics available.";
+
+            return Ok(response);
         }
     }
 }
