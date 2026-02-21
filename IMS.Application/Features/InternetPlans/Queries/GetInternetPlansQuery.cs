@@ -3,7 +3,6 @@ using AutoMapper.QueryableExtensions;
 using IMS.Application.Common.Interfaces;
 using IMS.Application.Common.Mappings;
 using IMS.Application.Common.Models;
-using IMS.Application.Common.Security;
 using MediatR;
 
 namespace IMS.Application.Features.InternetPlans.Queries

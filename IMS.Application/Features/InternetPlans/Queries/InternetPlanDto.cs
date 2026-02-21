@@ -7,5 +7,6 @@
         public string Description { get; set; } = string.Empty;
         public int SpeedMbps { get; set; }
         public decimal Price { get; set; }
+        public int SubscriberCount { get; set; }
     }
 }

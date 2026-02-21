@@ -34,7 +34,8 @@ namespace IMS.Application.Common.Mappings
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.InternetPlan.Price))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.InternetPlan.Description));
 
-            CreateMap<InternetPlan, InternetPlanDto>();
+            CreateMap<InternetPlan, InternetPlanDto>()
+                .ForMember(dest => dest.SubscriberCount, opt => opt.MapFrom(src => src.CustomerPlans.Count));
 
             CreateMap<Modem, ModemDto>();
 

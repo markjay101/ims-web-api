@@ -9,7 +9,7 @@ namespace IMS.Infrastructure.Persistence.EntityConfiguration
         public void Configure(EntityTypeBuilder<CustomerPlan> builder)
         {
             builder.HasOne(cp => cp.InternetPlan)
-                   .WithMany()
+                   .WithMany(ip => ip.CustomerPlans)
                    .HasForeignKey(cp => cp.InternetPlanId)
                    .OnDelete(DeleteBehavior.NoAction);
         }
