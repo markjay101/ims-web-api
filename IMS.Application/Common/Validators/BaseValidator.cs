@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace IMS.Application.Common.Validators
 {
-    public class BaseValidator<T> : AbstractValidator<T>
+    public abstract class BaseValidator<T> : AbstractValidator<T>
     {
         protected IRuleBuilderOptions<T, Guid> RuleForId(Expression<Func<T, Guid>> selector, string displayName = "Id")
         {
