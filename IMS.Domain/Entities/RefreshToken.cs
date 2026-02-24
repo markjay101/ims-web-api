@@ -14,6 +14,6 @@ namespace IMS.Domain.Entities
         public bool IsActive => Revoked == null && !IsExpired;
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 
-        public User User { get; set; } = new();
+        public User? User { get; set; }
     }
 }
