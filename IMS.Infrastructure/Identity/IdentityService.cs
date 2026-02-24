@@ -19,18 +19,18 @@ namespace IMS.Infrastructure.Identity
         IOptions<JwtOptions> jwtOptions) : IIdentityService
     {
         private readonly JwtOptions _jwtSettings = jwtOptions.Value;
-        public async Task<User?> AuthenticateAsync(string username, string password)
+        public async Task<(string? Token, User? User)> AuthenticateAsync(string username, string password)
         {
             var user = await userManager.FindByNameAsync(username);
 
             if (user != null && await userManager.CheckPasswordAsync(user, password))
             {
-                user.Accesstoken = GenerateJwtToken(user);
+                var token = GenerateJwtToken(user);
 
-                return user;
+                return (token, user);
             }
 
-            return null;
+            return (null, null);
         }
 
         public string? GenerateJwtToken(User user)
@@ -59,14 +59,15 @@ namespace IMS.Infrastructure.Identity
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task SetRefreshTokenCookie(User user, string ipAddress, HttpResponse response)
+        public async Task SetRefreshTokenCookie(Guid userId, string ipAddress, HttpResponse response)
         {
             var refreshToken = new RefreshToken
             {
-                UserId = user.Id,
+                UserId = userId,
                 Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
                 Expires = DateTime.UtcNow.AddDays(7),
-                CreatedByIp = ipAddress
+                CreatedByIp = ipAddress,
+                User = null,
             };
 
             await context.RefreshTokens.AddAsync(refreshToken);

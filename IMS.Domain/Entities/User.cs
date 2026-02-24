@@ -19,7 +19,6 @@ namespace IMS.Domain.Entities
         public DateTime UpdatedAt { get; set; }
 
         [NotMapped] public string? Password { get; set; }
-        [NotMapped] public string? Accesstoken { get; set; }
 
         private readonly List<BaseEvent> _domainEvents = [];
 

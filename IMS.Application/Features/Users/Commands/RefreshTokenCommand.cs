@@ -20,14 +20,15 @@ namespace IMS.Application.Features.Users.Commands
                                             .Include(rt => rt.User)
                                             .FirstOrDefaultAsync(rt => rt.Token == token, cancellationToken);
 
-            storedToken?.Revoked = DateTime.UtcNow;
 
-            if(storedToken?.User is null) return null;
+            if (storedToken == null || !storedToken.IsActive || storedToken.User == null) return null;
+
+            storedToken.Revoked = DateTime.UtcNow;
 
             var newAccessToken = identityService.GenerateJwtToken(storedToken.User);
             var ipAddress = identityService.GetIpAddress();
 
-            await identityService.SetRefreshTokenCookie(storedToken.User, ipAddress, httpContext!.Response);
+            await identityService.SetRefreshTokenCookie(storedToken.User.Id, ipAddress, httpContext!.Response);
 
             return newAccessToken;
         }

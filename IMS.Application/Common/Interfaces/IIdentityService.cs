@@ -6,9 +6,9 @@ namespace IMS.Application.Common.Interfaces
 {
     public interface IIdentityService
     {
-        Task<User?> AuthenticateAsync(string username, string password);
+        Task<(string? Token, User? User)> AuthenticateAsync(string username, string password);
         string? GenerateJwtToken(User user);
         string GetIpAddress();
-        Task SetRefreshTokenCookie(User user, string ipAddress, HttpResponse response);
+        Task SetRefreshTokenCookie(Guid userId, string ipAddress, HttpResponse response);
     }
 }

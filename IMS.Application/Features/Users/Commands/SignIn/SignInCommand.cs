@@ -12,17 +12,17 @@ namespace IMS.Application.Features.Users.Commands.SignIn
     {
         public async Task<UserTokenDto?> Handle(SignInCommand request, CancellationToken cancellationToken)
         {
-            var user = await identityService.AuthenticateAsync(request.UserName, request.Password);
+            var (token, user) = await identityService.AuthenticateAsync(request.UserName, request.Password);
 
             if (user is null) return null;
 
             var ipAddress = identityService.GetIpAddress();
 
-            await identityService.SetRefreshTokenCookie(user, ipAddress, httpContextAccessor.HttpContext!.Response);
+            await identityService.SetRefreshTokenCookie(user.Id, ipAddress, httpContextAccessor.HttpContext!.Response);
 
             return new UserTokenDto
             {
-                Token = user.Accesstoken,
+                Token = token,
                 User = mapper.Map<UserDto>(user),
             };
         }
