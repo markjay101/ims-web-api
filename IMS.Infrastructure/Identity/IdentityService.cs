@@ -1,39 +1,39 @@
-﻿using AutoMapper;
-using IMS.Application.Common.Interfaces;
-using IMS.Application.Features.Users.Commands.SignIn;
-using IMS.Application.Features.Users.Queries;
+﻿using IMS.Application.Common.Interfaces;
 using IMS.Domain.Entities;
 using IMS.Infrastructure.Common.Options;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace IMS.Infrastructure.Identity
 {
-    public class IdentityService(UserManager<User> userManager, IOptions<JwtOptions> jwtOptions, IMapper mapper) : IIdentityService
+    public class IdentityService(
+        IApplicationDbContext context, 
+        UserManager<User> userManager, 
+        IHttpContextAccessor httpContextAccessor,
+        IOptions<JwtOptions> jwtOptions) : IIdentityService
     {
         private readonly JwtOptions _jwtSettings = jwtOptions.Value;
-        public async Task<UserTokenDto?> AuthenticateAsync(string username, string password)
+        public async Task<User?> AuthenticateAsync(string username, string password)
         {
             var user = await userManager.FindByNameAsync(username);
 
             if (user != null && await userManager.CheckPasswordAsync(user, password))
             {
-                var token = GenerateJwtToken(user);
-                return new UserTokenDto
-                {
-                    Token = token!,
-                    User = mapper.Map<UserDto>(user)
-                };
+                user.Accesstoken = GenerateJwtToken(user);
+
+                return user;
             }
 
             return null;
         }
 
-        private string? GenerateJwtToken(User user)
+        public string? GenerateJwtToken(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -57,6 +57,38 @@ namespace IMS.Infrastructure.Identity
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public async Task SetRefreshTokenCookie(User user, string ipAddress, HttpResponse response)
+        {
+            var refreshToken = new RefreshToken
+            {
+                UserId = user.Id,
+                Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+                Expires = DateTime.UtcNow.AddDays(7),
+                CreatedByIp = ipAddress
+            };
+
+            await context.RefreshTokens.AddAsync(refreshToken);
+            await context.SaveChangesAsync();
+
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = refreshToken.Expires
+            };
+
+            response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
+        }
+
+        public string GetIpAddress()
+        {
+            if (httpContextAccessor.HttpContext?.Request.Headers.ContainsKey("X-Forwarded-For") == true)
+                return httpContextAccessor.HttpContext.Request.Headers["X-Forwarded-For"]!;
+
+            return httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "N/A";
         }
     }
 }

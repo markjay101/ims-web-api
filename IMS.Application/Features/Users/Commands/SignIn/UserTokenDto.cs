@@ -4,7 +4,7 @@ namespace IMS.Application.Features.Users.Commands.SignIn
 {
     public class UserTokenDto
     {
-        public string Token { get; set; } = string.Empty;
+        public string? Token { get; set; }
         public UserDto User { get; set; } = new();
     }
 }

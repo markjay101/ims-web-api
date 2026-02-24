@@ -18,13 +18,12 @@ namespace IMS.Domain.Entities
         public string? UpdatedBy { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        [NotMapped]public string? Password { get; set; }
-
+        [NotMapped] public string? Password { get; set; }
+        [NotMapped] public string? Accesstoken { get; set; }
 
         private readonly List<BaseEvent> _domainEvents = [];
 
-        [NotMapped]
-        public IReadOnlyList<BaseEvent> DomainEvents => _domainEvents;
+        [NotMapped] public IReadOnlyList<BaseEvent> DomainEvents => _domainEvents;
 
         public void AddDomainEvent(BaseEvent eventItem)
         {
