@@ -50,6 +50,7 @@ namespace IMS.Infrastructure.Persistence
         public DbSet<Modem> Modems => Set<Modem>();
         public DbSet<Payment> Payments => Set<Payment>();
         public DbSet<PaymentMethod> PaymentMethods => Set<PaymentMethod>();
+        public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
         public DbSet<SuperAdminDashboardSummaryDto> SuperAdminDashboardSummary => Set<SuperAdminDashboardSummaryDto>();
         public DbSet<AdminDashboardSummaryDto> AdminDashboardSummary => Set<AdminDashboardSummaryDto>();
     }
