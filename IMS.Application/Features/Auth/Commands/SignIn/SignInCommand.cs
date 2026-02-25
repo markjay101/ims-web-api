@@ -4,7 +4,7 @@ using IMS.Application.Features.Users.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace IMS.Application.Features.Users.Commands.SignIn
+namespace IMS.Application.Features.Auth.Commands.SignIn
 {
     public record SignInCommand(string UserName, string Password) : IRequest<UserTokenDto?>;
 

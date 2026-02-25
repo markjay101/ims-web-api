@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace IMS.Application.Features.Users.Commands
+namespace IMS.Application.Features.Auth.Commands
 {
     public record RefreshTokenCommand : IRequest<string?>;
     public class RefreshTokenCommandHandler(

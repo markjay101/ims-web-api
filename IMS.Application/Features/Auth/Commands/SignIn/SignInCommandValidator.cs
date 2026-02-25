@@ -2,7 +2,7 @@
 using IMS.Application.Common.Interfaces;
 using IMS.Application.Common.Validators;
 
-namespace IMS.Application.Features.Users.Commands.SignIn
+namespace IMS.Application.Features.Auth.Commands.SignIn
 {
     public class SignInCommandValidator : BaseValidator<SignInCommand>
     {

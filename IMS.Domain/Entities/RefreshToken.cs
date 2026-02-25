@@ -1,6 +1,4 @@
-﻿using IMS.Domain.Common;
-
-namespace IMS.Domain.Entities
+﻿namespace IMS.Domain.Entities
 {
     public class RefreshToken
     {

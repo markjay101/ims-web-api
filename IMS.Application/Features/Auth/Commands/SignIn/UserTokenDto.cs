@@ -1,6 +1,6 @@
 ﻿using IMS.Application.Features.Users.Queries;
 
-namespace IMS.Application.Features.Users.Commands.SignIn
+namespace IMS.Application.Features.Auth.Commands.SignIn
 {
     public class UserTokenDto
     {
