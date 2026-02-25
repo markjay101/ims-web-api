@@ -11,13 +11,13 @@ namespace IMS.WebApi.Extensions
 
             Log.Logger = new LoggerConfiguration()
                                 .ReadFrom.Configuration(builder.Configuration)
+                                .WriteTo.Console(outputTemplate: logTemplate)
                                 .WriteTo.Logger(lc => lc
                                     .Filter.ByExcluding(logEvent =>
                                         logEvent.Level < LogEventLevel.Warning
                                         && logEvent.Properties.ContainsKey("SourceContext")
                                         && logEvent.Properties["SourceContext"].ToString().Contains("Microsoft.EntityFrameworkCore")
                                         || logEvent.MessageTemplate.Text.Contains("Application started. Press Ctrl+C to shut down"))
-                                    .WriteTo.Console(outputTemplate: logTemplate)
                                     .WriteTo.File(builder.Configuration["LogPath"]!, 
                                                     rollingInterval: RollingInterval.Day, 
                                                     outputTemplate: logTemplate))
