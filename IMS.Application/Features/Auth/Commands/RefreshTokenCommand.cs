@@ -14,7 +14,7 @@ namespace IMS.Application.Features.Auth.Commands
         public async Task<string?> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
             var httpContext = httpContextAccessor.HttpContext;
-            var token = httpContext?.Request.Cookies["refreshToken"];;
+            var token = httpContext?.Request.Cookies["refreshToken"];
 
             var storedToken = await context.RefreshTokens
                                             .Include(rt => rt.User)

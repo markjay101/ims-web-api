@@ -1,8 +1,10 @@
 ﻿using IMS.Application.Common.Interfaces;
 using IMS.Domain.Entities;
 using IMS.Infrastructure.Common.Options;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -16,7 +18,8 @@ namespace IMS.Infrastructure.Identity
         IApplicationDbContext context, 
         UserManager<User> userManager, 
         IHttpContextAccessor httpContextAccessor,
-        IOptions<JwtOptions> jwtOptions) : IIdentityService
+        IOptions<JwtOptions> jwtOptions,
+        IWebHostEnvironment env) : IIdentityService
     {
         private readonly JwtOptions _jwtSettings = jwtOptions.Value;
         public async Task<(string? Token, User? User)> AuthenticateAsync(string username, string password)
@@ -73,12 +76,14 @@ namespace IMS.Infrastructure.Identity
             await context.RefreshTokens.AddAsync(refreshToken);
             await context.SaveChangesAsync();
 
+            var isDev = env.IsDevelopment();
+
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = refreshToken.Expires
+                Secure = !isDev,
+                SameSite = isDev ? SameSiteMode.Unspecified : SameSiteMode.None,
+                Expires = refreshToken.Expires,
             };
 
             response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
