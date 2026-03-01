@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace IMS.Infrastructure.Email
 {
-    public class EmailTemplateService(IWebHostEnvironment env) : IEmailTemplateService
+    internal class EmailTemplateService(IWebHostEnvironment env) : IEmailTemplateService
     {
         public async Task<string> GetRawTemplateAsync(string templateName, CancellationToken cancellationToken = default)
         {

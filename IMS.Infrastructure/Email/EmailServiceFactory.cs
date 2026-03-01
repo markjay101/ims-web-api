@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace IMS.Infrastructure.Email
 {
-    public class EmailServiceFactory(IServiceProvider serviceProvider)
+    internal class EmailServiceFactory(IServiceProvider serviceProvider)
     {
         public IEmailService GetEmailService()
         {

@@ -14,7 +14,7 @@ using System.Text;
 
 namespace IMS.Infrastructure.Identity
 {
-    public class IdentityService(
+    internal class IdentityService(
         IApplicationDbContext context, 
         UserManager<User> userManager, 
         IHttpContextAccessor httpContextAccessor,

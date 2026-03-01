@@ -6,6 +6,7 @@ using IMS.Infrastructure.Identity;
 using IMS.Infrastructure.Persistence;
 using IMS.Infrastructure.Persistence.Interceptors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -65,6 +66,16 @@ namespace IMS.Infrastructure
                 sp.GetRequiredService<EmailServiceFactory>().GetEmailService());
 
             return services;
+        }
+
+        public static async Task InitialiseDatabaseAsync(this IApplicationBuilder app)
+        {
+            using var scope = app.ApplicationServices.CreateScope();
+
+            var initialiser = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitializer>();
+
+            await initialiser.InitializeAsync();
+            await initialiser.SeedAsync();
         }
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace IMS.Infrastructure.Persistence.EntityConfiguration
 {
-    public class CustomerEntityConfiguration : IEntityTypeConfiguration<Customer>
+    internal class CustomerEntityConfiguration : IEntityTypeConfiguration<Customer>
     {
         public void Configure(EntityTypeBuilder<Customer> builder)
         {

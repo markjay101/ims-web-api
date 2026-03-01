@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace IMS.Infrastructure.Persistence.EntityConfiguration
 {
-    public class UserEntityConfiguration : IEntityTypeConfiguration<User>
+    internal class UserEntityConfiguration : IEntityTypeConfiguration<User>
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {

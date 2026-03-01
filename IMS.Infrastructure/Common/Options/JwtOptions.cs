@@ -1,6 +1,6 @@
 ﻿namespace IMS.Infrastructure.Common.Options
 {
-    public class JwtOptions
+    internal class JwtOptions
     {
         public const string SectionName = "JwtSettings";
 

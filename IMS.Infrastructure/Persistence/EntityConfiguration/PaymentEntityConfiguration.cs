@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace IMS.Infrastructure.Persistence.EntityConfiguration
 {
-    public class PaymentEntityConfiguration : IEntityTypeConfiguration<Payment>
+    internal class PaymentEntityConfiguration : IEntityTypeConfiguration<Payment>
     {
         public void Configure(EntityTypeBuilder<Payment> builder)
         {

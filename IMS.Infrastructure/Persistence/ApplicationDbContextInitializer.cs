@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IMS.Infrastructure.Persistence
 {
-    public class ApplicationDbContextInitializer(
+    internal class ApplicationDbContextInitializer(
         ApplicationDbContext context,
         UserManager<User> userManager)
     {

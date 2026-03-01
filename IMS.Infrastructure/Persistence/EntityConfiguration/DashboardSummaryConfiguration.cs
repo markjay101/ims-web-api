@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace IMS.Infrastructure.Persistence.EntityConfiguration
 {
-    public class SuperAdminDashboardSummaryConfiguration : IEntityTypeConfiguration<SuperAdminDashboardSummaryDto>
+    internal class SuperAdminDashboardSummaryConfiguration : IEntityTypeConfiguration<SuperAdminDashboardSummaryDto>
     {
         public void Configure(EntityTypeBuilder<SuperAdminDashboardSummaryDto> builder)
         {
@@ -14,7 +14,7 @@ namespace IMS.Infrastructure.Persistence.EntityConfiguration
         }
     }
 
-    public class AdminDashboardSummaryConfiguration : IEntityTypeConfiguration<AdminDashboardSummaryDto>
+    internal class AdminDashboardSummaryConfiguration : IEntityTypeConfiguration<AdminDashboardSummaryDto>
     {
         public void Configure(EntityTypeBuilder<AdminDashboardSummaryDto> builder)
         {

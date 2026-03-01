@@ -1,10 +1,9 @@
-﻿using IMS.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace IMS.Infrastructure.Persistence.EntityConfiguration
 {
-    public class ApplicationEntityConfiguration : IEntityTypeConfiguration<Domain.Entities.Application>
+    internal class ApplicationEntityConfiguration : IEntityTypeConfiguration<Domain.Entities.Application>
     {
         public void Configure(EntityTypeBuilder<Domain.Entities.Application> builder)
         {

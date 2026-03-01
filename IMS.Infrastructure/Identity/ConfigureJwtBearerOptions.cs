@@ -6,7 +6,7 @@ using System.Text;
 
 namespace IMS.Infrastructure.Identity
 {
-    public class ConfigureJwtBearerOptions(IOptions<JwtOptions> jwtOptions) : IPostConfigureOptions<JwtBearerOptions>
+    internal class ConfigureJwtBearerOptions(IOptions<JwtOptions> jwtOptions) : IPostConfigureOptions<JwtBearerOptions>
     {
         private readonly JwtOptions _jwtSettings = jwtOptions.Value;
         public void PostConfigure(string? name, JwtBearerOptions options)

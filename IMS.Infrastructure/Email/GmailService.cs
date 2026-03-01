@@ -7,7 +7,7 @@ using MimeKit;
 
 namespace IMS.Infrastructure.Email
 {
-    public class GmailService(IOptions<EmailOptions> emailOptions) : IEmailService
+    internal class GmailService(IOptions<EmailOptions> emailOptions) : IEmailService
     {
         private readonly GmailOptions _gmailSettings = emailOptions.Value.Gmail;
 

@@ -1,6 +1,5 @@
 using IMS.Application;
 using IMS.Infrastructure;
-using IMS.Infrastructure.Persistence;
 using IMS.WebApi;
 using IMS.WebApi.Extensions;
 using IMS.WebApi.Middlewares;
@@ -39,12 +38,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 
-    using (var scope = app.Services.CreateScope())
-    {
-        var initialiser = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitializer>();
-        await initialiser.InitializeAsync();
-        await initialiser.SeedAsync();
-    }
+    await app.InitialiseDatabaseAsync();
 
     app.MapScalarApiReference(options =>
     {
