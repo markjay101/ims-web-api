@@ -24,15 +24,15 @@ namespace IMS.Infrastructure.Email
             using var smtp = new SmtpClient();
             try
             {
-                await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls, cancellationToken);
 
-                await smtp.AuthenticateAsync(_gmailSettings.Email, _gmailSettings.AppPassword);
+                await smtp.AuthenticateAsync(_gmailSettings.Email, _gmailSettings.AppPassword, cancellationToken);
 
                 await smtp.SendAsync(email, cancellationToken);
             }
             finally
             {
-                await smtp.DisconnectAsync(true);
+                await smtp.DisconnectAsync(true, cancellationToken);
             }
         }
     }

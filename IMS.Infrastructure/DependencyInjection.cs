@@ -5,6 +5,7 @@ using IMS.Infrastructure.Email;
 using IMS.Infrastructure.Identity;
 using IMS.Infrastructure.Persistence;
 using IMS.Infrastructure.Persistence.Interceptors;
+using IMS.Infrastructure.Sms;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -18,9 +19,6 @@ namespace IMS.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config)
         {
-            services.Configure<JwtOptions>(config.GetSection(JwtOptions.SectionName));
-            services.Configure<EmailOptions>(config.GetSection(EmailOptions.SectionName));
-
             services.AddDataProtection();
             services.AddScoped<AuditableEntityInterceptor>();
             services.AddDbContext<ApplicationDbContext>((sp, options) =>
@@ -45,6 +43,7 @@ namespace IMS.Infrastructure
                     .AddEntityFrameworkStores<ApplicationDbContext>()
                     .AddDefaultTokenProviders();
 
+            services.Configure<JwtOptions>(config.GetSection(JwtOptions.SectionName));
             services.ConfigureOptions<ConfigureJwtBearerOptions>();
             services.AddAuthentication(options =>
                     {
@@ -58,12 +57,19 @@ namespace IMS.Infrastructure
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddAuthorization();
 
+            services.Configure<EmailOptions>(config.GetSection(EmailOptions.SectionName));
             services.AddTransient<IEmailTemplateService, EmailTemplateService>();
-
             services.AddTransient<GmailService>();
             services.AddSingleton<EmailServiceFactory>();
             services.AddTransient<IEmailService>(sp =>
                 sp.GetRequiredService<EmailServiceFactory>().GetEmailService());
+
+            services.Configure<SmsOptions>(config.GetSection(SmsOptions.SectionName));
+            services.AddTransient<TwilioService>();
+            services.AddTransient<InfobipService>();
+            services.AddSingleton<SmsServiceFactory>();
+            services.AddTransient<ISmsService>(sp =>
+                sp.GetRequiredService<SmsServiceFactory>().GetSmsService());
 
             return services;
         }
