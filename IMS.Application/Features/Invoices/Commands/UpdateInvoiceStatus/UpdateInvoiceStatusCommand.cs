@@ -3,7 +3,11 @@ using IMS.Application.Common.Interfaces;
 using IMS.Application.Common.Security;
 using IMS.Application.Features.Invoices.Queries;
 using IMS.Domain.Common.Enums;
+using IMS.Domain.Entities;
+using IMS.Domain.Events;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+
 namespace IMS.Application.Features.Invoices.Commands.UpdateInvoiceStatus
 {
     [Authorize(Role = UserRoles.SuperAdmin)]
@@ -13,11 +17,24 @@ namespace IMS.Application.Features.Invoices.Commands.UpdateInvoiceStatus
     {
         public async Task<InvoiceDto?> Handle(UpdateInvoiceStatusCommand request, CancellationToken cancellationToken)
         {
-            var invoice = await context.Invoices.FindAsync(request.Id, cancellationToken);
+            var invoice = await context.Invoices.Include(i => i.Payment)
+                                                .Include(i => i.Customer)
+                                                .Include(i => i.Customer.Application)
+                                                .Include(i => i.Customer!.Plan)
+                                                .ThenInclude(p => p.InternetPlan)
+                                                .AsSplitQuery()
+                                                .FirstOrDefaultAsync(i => i.Id == request.Id, cancellationToken);
 
-            if (invoice == null)
+            if (invoice == null || (invoice != null && invoice.Status == InvoiceStatus.PaidConfirmed))
                 return null;
-           
+
+            if(invoice!.Status == InvoiceStatus.PaidForConfirmation && request.Status == InvoiceStatus.PaidConfirmed)
+            {
+                invoice.Customer?.Plan?.NextDueDate = invoice.Customer?.Plan?.NextDueDate?.AddMonths(1);
+
+                invoice.AddDomainEvent(new PaidConfirmedEvent(invoice));
+            }
+
             invoice.Status = request.Status;
 
             await context.SaveChangesAsync(cancellationToken);
