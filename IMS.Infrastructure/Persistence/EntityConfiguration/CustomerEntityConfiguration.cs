@@ -29,7 +29,7 @@ namespace IMS.Infrastructure.Persistence.EntityConfiguration
                 .HasForeignKey<Customer>(c => c.ModemId);
 
             builder.HasMany(c => c.Invoices)
-                .WithOne()
+                .WithOne(i => i.Customer)
                 .HasForeignKey(i => i.CustomerId);
         }
     }

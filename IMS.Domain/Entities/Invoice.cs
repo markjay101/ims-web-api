@@ -11,6 +11,7 @@ namespace IMS.Domain.Entities
         public DateTime DueDate { get; set; }
         public InvoiceStatus Status { get; set; }
 
+        public Customer Customer { get; set; } = null!;
         public Payment? Payment{ get; set; }
     }
 }
