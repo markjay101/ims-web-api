@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #0078d4;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .invoice-box {
+            background-color: #f9f9f9;
+            border-left: 4px solid #0078d4;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .footer {
+            background-color: #f1f1f1;
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+        }
+
+        .button {
+            background-color: #0078d4;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>IMS Internet Services</h1>
+        </div>
+        <div class="content">
+            <p>Hi <strong>{CustomerName}</strong>,</p>
+            <p>Your invoice for this billing period has been generated. Please find the details below:</p>
+
+            <div class="invoice-box">
+                <table width="100%">
+                    <tr>
+                        <td><strong>Plan:</strong></td>
+                        <td align="right">{PlanName}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Due Date:</strong></td>
+                        <td align="right">{DueDate}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><hr style="border: 0; border-top: 1px solid #ddd;"></td>
+                    </tr>
+                    <tr>
+                        <td><span style="font-size: 18px;">Total Amount:</span></td>
+                        <td align="right" class="amount">₱{Amount}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <p>To avoid service interruption, please settle your payment on or before the due date.</p>
+
+            <div style="text-align: center;">
+                <a href="{PaymentLink}" class="button">View & Pay Invoice</a>
+            </div>
+        </div>
+        <div class="footer">
+            <p>&copy; 2026 IMS Project. This is an automated notification.</p>
+            <p>Tanza, Calabarzon, Philippines</p>
+        </div>
+    </div>
+</body>
+</html>
