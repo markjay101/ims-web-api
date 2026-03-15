@@ -18,7 +18,7 @@ namespace IMS.Application.Common.Interfaces
         DbSet<Payment> Payments { get; }
         DbSet<PaymentMethod> PaymentMethods { get; }
         DbSet<RefreshToken> RefreshTokens { get; }
-        DbSet<SuperAdminDashboardSummaryDto> SuperAdminDashboardSummary { get; }
-        DbSet<AdminDashboardSummaryDto> AdminDashboardSummary { get; }
+        Task<SuperAdminDashboardSummaryDto?> GetSuperAdminDashboardSummary(CancellationToken cancellationToken);
+        Task<AdminDashboardSummaryDto?> GetAdminDashboardSummary(CancellationToken cancellationToken);
     }
 }

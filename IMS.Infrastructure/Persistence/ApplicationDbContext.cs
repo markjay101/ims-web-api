@@ -40,6 +40,22 @@ namespace IMS.Infrastructure.Persistence
             return result;
         }
 
+        public async Task<SuperAdminDashboardSummaryDto?> GetSuperAdminDashboardSummary(CancellationToken cancellationToken)
+        {
+            return await Set<SuperAdminDashboardSummaryDto>()
+                                    .FromSqlRaw("EXEC sp_GetDashboardSummary")
+                                    .AsNoTracking()
+                                    .FirstOrDefaultAsync(cancellationToken);
+        }
+
+        public async Task<AdminDashboardSummaryDto?> GetAdminDashboardSummary(CancellationToken cancellationToken)
+        {
+            return await Set<AdminDashboardSummaryDto>()
+                                    .FromSqlRaw("EXEC sp_GetDashboardSummary")
+                                    .AsNoTracking()
+                                    .FirstOrDefaultAsync(cancellationToken);
+        }
+
         public DbSet<User> Users => Set<User>();
         public DbSet<Domain.Entities.Application> Applications => Set<Domain.Entities.Application>();
         public DbSet<Customer> Customers => Set<Customer>();
@@ -51,7 +67,5 @@ namespace IMS.Infrastructure.Persistence
         public DbSet<Payment> Payments => Set<Payment>();
         public DbSet<PaymentMethod> PaymentMethods => Set<PaymentMethod>();
         public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
-        public DbSet<SuperAdminDashboardSummaryDto> SuperAdminDashboardSummary => Set<SuperAdminDashboardSummaryDto>();
-        public DbSet<AdminDashboardSummaryDto> AdminDashboardSummary => Set<AdminDashboardSummaryDto>();
     }
 }

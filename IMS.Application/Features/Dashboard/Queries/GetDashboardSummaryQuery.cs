@@ -1,7 +1,6 @@
 ﻿using IMS.Application.Common.Interfaces;
 using IMS.Application.Common.Security;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace IMS.Application.Features.Dashboard.Queries
 {
@@ -15,10 +14,10 @@ namespace IMS.Application.Features.Dashboard.Queries
             var userRole = currentUserService.Role;
 
             if (userRole == UserRoles.SuperAdmin)
-                return await context.SuperAdminDashboardSummary.FromSqlRaw("EXEC sp_GetDashboardSummary").AsNoTracking().AsAsyncEnumerable().FirstAsync(cancellationToken);
+                return await context.GetSuperAdminDashboardSummary(cancellationToken);
 
             else if (userRole == UserRoles.Admin)
-                return await context.AdminDashboardSummary.FromSqlRaw("EXEC sp_GetDashboardSummary").AsNoTracking().AsAsyncEnumerable().FirstAsync(cancellationToken);
+                return await context.GetAdminDashboardSummary(cancellationToken);
 
             return null;
         }
