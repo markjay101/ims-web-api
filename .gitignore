@@ -362,7 +362,12 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+## [JetBrains Rider]
+.idea/
+
 # Secrets and local configuration
 appsettings.json
 appsettings.*.json
+!appsettings.example.json
+
 IMS.WebApi/IMS.WebApi.http
