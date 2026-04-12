@@ -17,6 +17,9 @@ namespace IMS.Infrastructure.Email
             {
                 template = template.Replace($"{{{item.Key}}}", item.Value);
             }
+
+            template = template.Replace("{{Year}}", DateTime.Now.Year.ToString());
+
             return template;
         }
     }
