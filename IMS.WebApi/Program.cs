@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.UseSerilog();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.AddApplicationServices();
+builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddWebApiServices(builder.Configuration);
 
 

@@ -1,5 +1,6 @@
 ﻿using IMS.Application.Common.Interfaces;
 using IMS.Domain.Common.Enums;
+using IMS.Domain.Events;
 using MediatR;
 
 namespace IMS.Application.Features.Applications.Commands.CreateApplication
@@ -32,6 +33,8 @@ namespace IMS.Application.Features.Applications.Commands.CreateApplication
                 InternetPlanId = request.InternetPlanId,
                 Status = ApplicationStatus.Pending
             };
+
+            application.AddDomainEvent(new CreatedApplicationEvent(application));
 
             await context.Applications.AddAsync(application, cancellationToken);
 
